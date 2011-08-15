@@ -8,15 +8,11 @@
 #include "stm32f10x_lib.h"
 #include "Draw.h"
 
-//================= 输入通道编号定义 =================
+//====================================================
 #define A                 0
 #define B                 1
-#define C                 2
-#define D                 3
 #define A_                2
 #define B_                3
-#define Ap                4
-#define Bp                5
 
 //================== 结构变量宏定义 ==================
 #define _1_source  Title[TRACK1][SOURCE].Value
@@ -43,11 +39,12 @@
 #define _T_base    Title[T_BASE][BASE].Value
 #define _Mode      (Title[T_BASE][MODE].Value)
 
-#define _A_Range    Title[TRACK1][RANGE].Value
-#define _B_Range    Title[TRACK2][RANGE].Value
+#define _A_Range   Title[TRACK1][RANGE].Value
+#define _B_Range   Title[TRACK2][RANGE].Value
 
-#define _Kp        X_Attr[Title[T_BASE][BASE].Value].KP  // 当前档位的X插值系数
-#define _INSERT    G_Attr[0].INSERT                      // 开始应用插值的档位
+#define _Kp1       X_Attr[Title[T_BASE][BASE].Value].KP   // 普通采样档位的X插值系数
+#define _Kp2       X_Attr[Title[T_BASE][BASE].Value+5].KP // 交替采样档位的X插值系数
+#define _INSERT    G_Attr[0].INSERT                       // 开始应用插值的档位
 
 #define _State     Title[RUNNING][STATE]
 #define _Status    Title[RUNNING][STATE].Value
@@ -81,17 +78,24 @@ typedef struct  // 脉冲波形输出驱动表
 
 extern u8  Interlace;
 extern u8  TrackBuff [X_SIZE * 4];          // i+0~3,分别存放1～4号轨迹数据
-extern u16 JumpCnt;
-extern u32 a_Avg, b_Avg;                    // 统计用中间变量
+extern u32 a_Avg, b_Avg, a_Ssq, b_Ssq;
+//extern u8  a_Vpp, b_Vpp;           
+//extern s16 a_Vdc, b_Vdc;            
+extern u8  a_Max, b_Max, a_Min, b_Min;                // 统计用中间变量
 
-extern s16 A_Vdc, A_Vpp, A_Max, A_Min, A_Rms;     // 计量结果
-extern s16 B_Vdc, B_Vpp, B_Max, B_Min, B_Rms;     
+extern u16 Tcs, Tcnt;
 
-extern s8  Kab;              // 模拟通道零点平衡校正系数
-extern s8  Ka1[10], Kb1[10]; // 模拟通道零点误差校正系数
-extern u16 Ka2[10], Kb2[10]; // 模拟通道增益误差校正系数
-extern u16 Ka3, Kb3;         // 模拟通道位移误差校正系数
+extern u16 TaS, TbS, TcS, TdS;            // 周期累计
+extern u16 PaS, PbS, PcS, PdS;            // 脉宽累计
+//extern u16 b_Pcnt, c_Pcnt, d_Pcnt;           // 脉冲计数
+extern u16 TaN, TbN, TcN, TdN;           // 周期计数
+
+extern s8  Kab;              
+extern s8  Ka1[10], Kb1[10]; 
+extern u16 Ka2[10], Kb2[10]; 
+extern s8  Ka3[10], Kb3[10]; 
 extern u32 DataBuf[4096];
+extern u8  Vertical[15][10]; 
 
 void App_init(void);
 void View_init(void);
@@ -101,7 +105,7 @@ void Update_Output(void);
 void Update_Trig(void); 
 void Process(void);
 void Synchro(void);
-u8   CH_D_Data(void);  
+void Send_Data(s16 Va, s16 Vb, u8 C_D, u16 n);
 
 #endif
 /******************************** END OF FILE *********************************/

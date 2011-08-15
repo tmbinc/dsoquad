@@ -2,7 +2,6 @@
  File Name : Calibrat.c  
  Version   : DS203_APP Ver 2.3x                                  Author : bure
 *******************************************************************************/
-#include <string.h>
 #include "Interrupt.h"
 #include "Function.h"
 #include "Calibrat.h"
@@ -11,31 +10,41 @@
 #include "BIOS.h"
 #include "Menu.h"
 
-uc8 VS_STR[9][12]={"250-300mV","0.5-0.6V ","1.0-1.2V ","2.5-3.0V ",
-                   "5.0-6.0V "," 10-12V  "," 25-30V  "," 50-60V  ","suitable "};
-uc8 ExitStr[3][30]={" Exit without Calibration ", 
-                    "Exit with Save Calibration", 
-                    "Exit with Restore Defaults"};
+uc8 VS_STR[9][12]  ={"250-300mV", "!0.5-0.6V!","!1.0-1.2V!","!2.5-3.0V!",
+                     "!5.0-6.0V!"," !10-12V! "," !25-30V! "," !50-60V! "};
+uc8 ExitStr[3][50] ={" PRESS (#) KEY TO Exit WITH RESTORE DEFAULTS ",
+                     " PRESS (#) KEY TO Exit WITH SAVE CALIBRATION ",
+                     " PRESS (#) KEY TO Exit WITHOUT CALIBRATION   "};
+uc8 V_UNIT1[8] ={'m','V','m','V','V',' ','k','V'};
+
 void Balance(void)
 {
-  __Set(STANDBY, DN);          // 退出省电状态
+  u16 i;
+  
+  __Set(STANDBY, DN);                          // 退出省电状态
   __Set(ADC_CTRL, EN );       
-  _Status = RUN;
-  __Set(T_BASE_PSC, X_Attr[_2uS].PSC);                // T_BASE = 2uS
+  __Set(T_BASE_PSC, X_Attr[_2uS].PSC);         // T_BASE = 2uS
   __Set(T_BASE_ARR, X_Attr[_2uS].ARR);
-  __Set(CH_A_COUPLE, DC);
+  __Set(CH_A_COUPLE, AC);
+  __Set(CH_B_COUPLE, AC);
   __Set(CH_A_OFFSET, 100);
-  __Set(CH_B_COUPLE, DC);
   __Set(CH_B_OFFSET, 100);
   __Set(CH_A_RANGE,  G_Attr[0].Yp_Max);        // 10V/Div
   __Set(CH_B_RANGE,  G_Attr[0].Yp_Max+1);      // B通道合并到A通道
   __Set(ADC_MODE, INTERLACE);                  // Set Interlace mode
+  Update_Trig();
+  __Set(TRIGG_MODE, UNCONDITION);              // 设任意触发
   Delayms(2000); 
+  
   __Set(FIFO_CLR, W_PTR); 
   Delayms(20); 
-  JumpCnt =0;
-  Process();                                     // 采样波形处理   
-//  Kab = 0;
+  a_Avg = 2048;               
+  b_Avg = 2048;            
+  for(i=0; i <4096; i++){
+    DataBuf[i] = __Read_FIFO();         // 读入32位FIFO数据, 读后指针+1
+    a_Avg += (DataBuf[i] & 0xFF );      // 累计直流平均值                
+    b_Avg += ((DataBuf[i]>>8) & 0xFF );              
+  }
   Kab = (a_Avg - b_Avg)/4096;
 }
 /*******************************************************************************
@@ -43,38 +52,32 @@ void Balance(void)
 *******************************************************************************/
 void Calibrat(u8 Channel)
 { 
-  u8  V_Unit[4][3]={"uV","mV","V ","kV"};
-  u16 i, j, k, Range, Target;
-  u8  Exit = 0;      
-
-  I32STR_RES Num;
+  s8  Ma1[10], Mb1[10], Ma3[10], Mb3[10];
+  u16 Ma2[10], Mb2[10], i, j;
+  s16 TmpA, TmpB;
+  u8  Range, n[10], k, m, Step;
   
   Key_Buffer = 0; 
   __Set(STANDBY, DN);                                   // 退出省电状态
   __Set(BACKLIGHT, 10*(Title[BK_LIGHT][CLASS].Value+1));
   __Clear_Screen(BLACK);                                // 清屏幕
   
-  k = Load_Parameter();                                 // 读取预设开机参数  
   Interlace = 0;
-  __Set(ADC_MODE, SEPARATE);                        // Set Separate mode
-  __Set(TRIGG_MODE, UNCONDITION);                       // 设任意触发
+  __Set(ADC_MODE, SEPARATE);                            // Set Separate mode
   __Set(ADC_CTRL, EN);       
+  __Set(TRIGG_MODE, UNCONDITION);                       // 设任意触发
   _Status = RUN;
   __Set(BEEP_VOLUME, 5*(Title[VOLUME][CLASS].Value-1)); // Reload volume
   Beep_mS = 500;                                        // 蜂鸣器响500mS
   Range = 0;
-  if(Channel == TRACK1)  Target = 0;
-  else                   Target = 3;
-  Key_Buffer = 0; 
+  Step  = 0;
+  m     = 0;
   
   __Set(T_BASE_PSC, X_Attr[_100uS].PSC);                // T_BASE = 100uS
   __Set(T_BASE_ARR, X_Attr[_100uS].ARR);
 
   __Set(CH_A_COUPLE, DC);
-  __Set(CH_A_OFFSET, 5);
   __Set(CH_B_COUPLE, DC);
-  __Set(CH_B_OFFSET, 5);
-  
   
   for(j=0; j<220; j+=20){                               // 画表格  
     for(i=0; i<399; i++){
@@ -108,226 +111,322 @@ void Calibrat(u8 Channel)
   Print_Str(  6, 185, 0x0005, PRN, "CH_A");              // 显示表格标题栏
   Print_Str( 49, 185, 0x0005, PRN, "ZERO");
   Print_Str( 93, 185, 0x0005, PRN, "DIFF");
-  Print_Str(141, 185, 0x0005, PRN, "VOTAGE");
+  Print_Str(137, 185, 0x0005, PRN, "VOLTAGE");
   Print_Str(206, 185, 0x0105, PRN, "CH_B");
   Print_Str(249, 185, 0x0105, PRN, "ZERO");
   Print_Str(293, 185, 0x0105, PRN, "DIFF");
-  Print_Str(342, 185, 0x0105, PRN, "VOTAGE");
+  Print_Str(338, 185, 0x0105, PRN, "VOLTAGE");
     
-  for(i=0; i<G_Attr[0].Yp_Max+1; i++){
-    Print_Str(  6, 166-(i*20), 0x0005, PRN, Y_Attr[i].STR);
+  for(i=0; i<=G_Attr[0].Yp_Max; i++){
+    Print_Str(  6, 166-(i*20), 0x0005, PRN, Y_Attr[i].STR); // 显示量程
     Print_Str(206, 166-(i*20), 0x0105, PRN, Y_Attr[i].STR);
+    Ma1[i] = Ka1[i];  Ma2[i] = Ka2[i];  Ma3[i] = Ka3[i];    // 备份校准前的参数
+    Mb1[i] = Kb1[i];  Mb2[i] = Kb2[i];  Mb3[i] = Kb3[i];
   }
-  Print_Str( 10, 166-(8*20), 0x0405, PRN, (u8*)ExitStr[Exit % 3]);
 
-  if(k != 0) {
-    Print_Str( 32, 216, 0x0405, PRN, "         Parameters version error          ");
-    __Set(BEEP_VOLUME, 5*(Title[VOLUME][CLASS].Value-1));// Volume
-    Beep_mS = 500;                                       // 蜂鸣器响500mS
-    Delayms(2000); 
-    App_init();
-    return;
-  }
   while (1){
     if(PD_Cnt == 0){
-      __Set(BACKLIGHT, 0);                         // 关闭背光
-      __Set(STANDBY, EN);                          // 进入省电状态
+      __Set(BACKLIGHT, 0);                               // 关闭背光
+      __Set(STANDBY, EN);                                // 进入省电状态
       return;
     }
-    JumpCnt =0;
-    Process();                                     // 采样波形处理   
-    if((Target == 1)||(Target == 4)){ 
-      A_Vdc = Ka1[Range] +(Ka2[Range]*(a_Avg/4096))/1024 - 195;      
-      B_Vdc = Kb1[Range] +(Kb2[Range]*(b_Avg/4096))/1024 - 195;      
-    } else {
-      A_Vdc = Ka1[Range] +(Ka2[Range]*(a_Avg/4096))/1024 - 5;      
-      B_Vdc = Kb1[Range] +(Kb2[Range]*(b_Avg/4096))/1024 - 5;     
+    __Set(CH_A_RANGE, Range);  __Set(CH_B_RANGE, Range);
+    Delayms(20); 
+    __Set(FIFO_CLR, W_PTR);
+    Delayms(20); 
+    a_Avg = 2048;  b_Avg = 2048;               
+    for(i=0; i <4096; i++){
+      DataBuf[i] = __Read_FIFO();         // 读入32位FIFO数据
+      a_Avg += (DataBuf[i] & 0xFF );      // 累计直流平均值                
+      b_Avg += ((DataBuf[i]>>8) & 0xFF );              
     }
-//    if(__Get(FIFO_FULL))  __Set(FIFO_CLR, W_PTR); // FIFO写指针复位 
+    TmpA  = Ka1[Range] +(Ka2[Range]*(a_Avg/4096)+ 512)/1024;
+    TmpB  = Kb1[Range] +(Kb2[Range]*(b_Avg/4096)+ 512)/1024;
 
-    if(Key_Buffer) { 
-      PD_Cnt = 600;                               // 600秒
-      if(Range <= G_Attr[0].Yp_Max){
-      switch (Target){  
+    if(Blink){ 
+      Blink = 0;
+      switch (Step){  
       case 0:
-        Int32String_sign(&Num, A_Vdc);
-        Print_Str( 45, 166-(Range*20), 0x0005, PRN, Num.str);
+        Range = 0;
+        __Set(CH_A_OFFSET, ((1024+Ka3[Range])*40 + 512)/1024);
+        __Set(CH_B_OFFSET, ((1024+Kb3[Range])*40 + 512)/1024);
+        Print_Str(   8, 216, 0x0305, PRN,   "        PLEASE CONNECT");
+        Print_Str(29*8, 216, 0x0305, PRN,   "INPUT TO ");
+        Print_Str(38*8, 216, 0x0405, PRN,   "GND      ");
+        Print_Str(   8,   6, 0x0305, PRN,   "   PRESS   KEY TO CONFIRM THE INPUT VOLTAGE   ");
+        Print_Str(10*8,   6, 0x0405, Twink, " ");
+        if(Channel == TRACK1){
+          Print_Str( 23*8, 216, 0x0005, PRN, " CH_A ");
+          for(i=0; i<=G_Attr[0].Yp_Max; i++){
+            Ka1[i] = 0; Ka2[i] = 1024; Ka3[i] = 0;         // 设置校准参数初值
+          }
+        }
+        if(Channel == TRACK2){
+          Print_Str( 23*8, 216, 0x0105, PRN, " CH_B ");
+          for(i=0; i<=G_Attr[0].Yp_Max; i++){
+            Kb1[i] = 0; Kb2[i] = 1024; Kb3[i] = 0;         // 设置校准参数初值
+          }
+        }
         break;
       case 1:
-        Int32String_sign(&Num, A_Vdc);
-        Print_Str( 89, 166-(Range*20), 0x0005, PRN, Num.str);
+        Print_Str(   8,   6, 0x0305, PRN,   "   AUTOMATIC CALIBRATION IN PROGRESS...       ");
+        if(Channel == TRACK1){
+          s8ToPercen(n, TmpA - 40);
+          Print_Str( 45, 166-(Range*20), 0x0005, INV, n);
+          Ka1[Range] -= TmpA - 40; 
+        } 
+        if(Channel == TRACK2){
+          s8ToPercen(n, TmpB - 40);
+          Print_Str(245, 166-(Range*20), 0x0105, INV, n);
+          Kb1[Range] -= TmpB - 40; 
+        }
+        Range++;
+        if(Range > G_Attr[0].Yp_Max){ 
+          Range = 0;  Step++;
+        } 
+        __Set(CH_A_OFFSET, ((1024+Ka3[Range])*40 + 512)/1024);
+        __Set(CH_B_OFFSET, ((1024+Kb3[Range])*40 + 512)/1024);
+        k = 0;
         break;
       case 2:
-        Int32String_sign(&Num, A_Vdc * Y_Attr[Range].SCALE);
-        Print_Str(134, 166-(Range*20), 0x0005, PRN, Num.str);
-        Print_Str(174, 166-(Range*20), 0x0005, PRN, V_Unit[Num.decPos]);
+        k++;
+        if(k >= 8) k = 0;
+        if(Channel == TRACK1){
+          s8ToPercen(n, TmpA - 40);
+          Print_Str( 45, 166-(Range*20), 0x0005, PRN, n);
+          if(TmpA - 40 != 0)  Ka1[Range] -= TmpA - 40;
+          else                k = 0;           
+        } 
+        if(Channel == TRACK2){
+          s8ToPercen(n, TmpB - 40);
+          Print_Str(245, 166-(Range*20), 0x0105, PRN, n);
+          if(TmpB - 40 != 0)  Kb1[Range] -= TmpB - 40;
+          else                k = 0; 
+        }
+        if(k == 0)  Range++;
+        if(Range > G_Attr[0].Yp_Max){ 
+          Range = 0;  Step++;
+        } 
+        __Set(CH_A_OFFSET, ((1024+Ka3[Range])*40 + 512)/1024);
+        __Set(CH_B_OFFSET, ((1024+Kb3[Range])*40 + 512)/1024);
         break;
       case 3:
-        Int32String_sign(&Num, B_Vdc);
-        Print_Str(245, 166-(Range*20), 0x0105, PRN, Num.str);
+        k++;
+        __Set(CH_A_OFFSET, ((1024+Ka3[Range])*160 + 512)/1024);
+        __Set(CH_B_OFFSET, ((1024+Kb3[Range])*160 + 512)/1024);
+        if((Channel == TRACK1)&&(TmpA > 140))  Step++;
+        if((Channel == TRACK2)&&(TmpB > 140))  Step++;
+        if(k > 20)  Step++;
         break;
       case 4:
-        Int32String_sign(&Num, B_Vdc);
-        Print_Str(289, 166-(Range*20), 0x0105, PRN, Num.str);
+        k = 0;
+        if(Channel == TRACK1){
+          s8ToPercen(n, TmpA - 160);
+          Print_Str( 89, 166-(Range*20), 0x0005, INV, n);
+          Ka3[Range] -= (1024*(TmpA-160)+80)/160;
+        } 
+        if(Channel == TRACK2){
+          s8ToPercen(n, TmpB - 160);
+          Print_Str(289, 166-(Range*20), 0x0105, INV, n);
+          Kb3[Range] -= (1024*(TmpB-160)+80)/160;
+        }
+        Range++;
+        if(Range > G_Attr[0].Yp_Max){ 
+          Range = 0;  Step++;
+        } 
+        __Set(CH_A_OFFSET, ((1024+Ka3[Range])* 160 + 512)/1024);
+        __Set(CH_B_OFFSET, ((1024+Kb3[Range])* 160 + 512)/1024);
         break;
       case 5:
-        Int32String_sign(&Num, B_Vdc * Y_Attr[Range].SCALE);
-        Print_Str(334, 166-(Range*20), 0x0105, PRN, Num.str);
-        Print_Str(374, 166-(Range*20), 0x0105, PRN, V_Unit[Num.decPos]);
+        k++;
+        if(k >= 8) k = 0;
+        if(Channel == TRACK1){
+          s8ToPercen(n, TmpA - 160);
+          Print_Str( 89, 166-(Range*20), 0x0005, PRN, n);
+          if(TmpA - 160 != 0) Ka3[Range] -= (1024*(TmpA-160)+80)/160;
+          else                k = 0;           
+        } 
+        if(Channel == TRACK2){
+          s8ToPercen(n, TmpB - 160);
+          Print_Str(289, 166-(Range*20), 0x0105, PRN, n);
+          if(TmpB - 160 != 0) Kb3[Range] -= (1024*(TmpB-160)+80)/160;
+          else                k = 0; 
+        }
+        if(k == 0)  Range++;
+        if(Range > G_Attr[0].Yp_Max){ 
+          Range = 0;  Step++;
+        } 
+        __Set(CH_A_OFFSET, ((1024+Ka3[Range])* 160 + 512)/1024);
+        __Set(CH_B_OFFSET, ((1024+Kb3[Range])* 160 + 512)/1024);
+        break;
+      case 6:
+        k++;
+        if(k > 20)  Step++;
+        Range = 0;
+        if(m < 2){
+          __Set(CH_A_OFFSET, ((1024+Ka3[Range])*40 + 512)/1024);
+          __Set(CH_B_OFFSET, ((1024+Kb3[Range])*40 + 512)/1024);
+          if((Channel == TRACK1)&&(TmpA < 50)){
+            Step = 1;
+            m++;
+          }
+          if((Channel == TRACK2)&&(TmpB < 50)){
+            Step = 1;
+            m++;
+          }
+        } else {
+          __Set(CH_A_OFFSET, ((1024+Ka3[Range])* 25 + 512)/1024);
+          __Set(CH_B_OFFSET, ((1024+Kb3[Range])* 25 + 512)/1024);
+          if((Channel == TRACK1)&&(TmpA < 55))  Step++;
+          if((Channel == TRACK2)&&(TmpB < 55))  Step++;
+        }
+        break;
+      case 7:
+        Print_Str( 4*8, 216, 0x0305, PRN,   " INPUT ");
+        Print_Str(11*8, 216, 0x0405, Twink, (u8*)VS_STR[Range]);
+        Print_Str(20*8, 216, 0x0305, PRN,   " STANDARD VOLTAGE TO ");
+        Print_Str(   8,   6, 0x0305, PRN,   "MODIFY VOLTAGE:   ...    ");
+        Print_Str(18*8,   6, 0x0405, Twink, "-");
+        Print_Str(22*8,   6, 0x0405, Twink, "+");
+        Print_Str(27*8,   6, 0x0305, PRN,   "SELECT RANGE:   ---   ");
+        Print_Str(42*8,   6, 0x0405, Twink, "<");
+        Print_Str(46*8,   6, 0x0405, Twink, ">");
+        if(Channel == TRACK1){
+          if(TmpA > 35){
+            Int2Str(n, (TmpA - 25)* Y_Attr[Range].SCALE, V_UNIT, 3, SIGN);
+          } else {
+            Int2Str(n, 0, V_UNIT, 3, SIGN);
+          }
+          Print_Str( 134, 166-(Range*20), 0x0005, Twink, n);
+          Print_Str(41*8, 216,            0x0005, PRN,   "CH_A  ");
+        } 
+        if(Channel == TRACK2){
+          if(TmpB > 35){
+            Int2Str(n, (TmpB - 25)* Y_Attr[Range].SCALE, V_UNIT, 3, SIGN);
+          } else {
+            Int2Str(n, 0, V_UNIT, 3, SIGN);
+          }
+          Print_Str( 334, 166-(Range*20), 0x0105, Twink, n);
+          Print_Str(41*8, 216,            0x0105, PRN,   "CH_B  ");
+        }
+        break;
+      case 8:                             //"    PRESS   ---   TO SELECT THE NEXT OPERATION"
+        m = 0;
+        Print_Str(   8,   6, 0x0305, PRN,   "    PRESS   ---  ");
+        Print_Str(12*8,   6, 0x0405, Twink, "<");
+        Print_Str(16*8,   6, 0x0405, Twink, ">");
+        Print_Str(17*8,   6, 0x0305, PRN,   " TO SELECT THE NEXT OPERATION   ");
+        Print_Str(   8, 216, 0x0305, PRN,   "  PRESS   TO ");
+        Print_Str(14*8, 216, 0x0405, PRN,   "CONFIRM THE RE-CALIBRATION ");
+        Print_Str( 9*8, 216, 0x0405, Twink, " ");       
+        if(Channel == TRACK1)  Print_Str(41*8, 216, 0x0005, PRN, "CH_A "); 
+        if(Channel == TRACK2)  Print_Str(41*8, 216, 0x0105, PRN, "CH_B ");
+        break;                            //"  PRESS   TO CONFIRM THE RE-CALIBRATION CH_A  "
+      case 9:                             //             "SELECT THE CALIBRATION CH_A      "
+        Print_Str( 9*8, 216, 0x0405, Twink, " ");       
+        Print_Str(14*8, 216, 0x0405, PRN,   "SELECT THE CALIBRATION ");
+        if(Channel == TRACK1)  Print_Str(37*8, 216, 0x0105, PRN, "CH_B     "); 
+        if(Channel == TRACK2)  Print_Str(37*8, 216, 0x0005, PRN, "CH_A     ");
+        break;
+      case 10:                            //             "Exit WITHOUT SAVE RESULTS        "
+        Print_Str( 9*8, 216, 0x0405, Twink, " ");       
+        Print_Str(14*8, 216, 0x0405, PRN,   "Exit WITHOUT SAVE RESULTS        ");
+        break;
+      case 11:                            //             "Exit AND SAVE CALIBRATION RESULTS"
+        Print_Str( 9*8, 216, 0x0405, Twink, " ");       
+        Print_Str(14*8, 216, 0x0405, PRN,   "Exit AND SAVE CALIBRATION RESULTS");
+        break;
+      case 12:                            //             "Exit AND RESTORE SYSTEM DEFAULTS "
+        Print_Str( 9*8, 216, 0x0405, Twink, " ");       
+        Print_Str(14*8, 216, 0x0405, PRN,   "Exit AND RESTORE SYSTEM DEFAULTS ");
+        break;
       }
-      }
+    }
+    if(Key_Buffer){ 
+      PD_Cnt = 600;                               // 重新设定等待时间600秒
+      if((Range <= G_Attr[0].Yp_Max)&&(Step == 7)){
+        if(Channel == TRACK1){
+          Print_Str(134, 166-(Range*20), 0x0005, PRN, n);
+        }
+        if(Channel == TRACK2){
+          Print_Str(334, 166-(Range*20), 0x0105, PRN, n);
+        }
+      } 
       switch (Key_Buffer){  
       case KEY2:
-        if(Range > G_Attr[0].Yp_Max){
-          if(Exit == 1){
-            Save_Parameter(0);                         // 保存校正后的参数
-            Print_Str( 32, 216, 0x0405, PRN, "         Save the calibration data         ");
-            Delayms(1000); 
-          }
-          if(Exit == 2){
-            for(i=0; i<=G_Attr[0].Yp_Max; i++){
-              Ka1[i]=0;
-              Kb1[i]=0;
-              Ka2[i]=1024;
-              Kb2[i]=1024;
+        if(Step == 0)  Step++;
+        if((Step == 8)||(Step == 9)){
+          if(Step == 9) Channel = 1 - Channel;
+          for(i=0; i<=G_Attr[0].Yp_Max; i++){
+            if(Channel == TRACK1){
+              Print_Str( 45, 166-(i*20), 0x0005, PRN, "     ");   
+              Print_Str( 89, 166-(i*20), 0x0005, PRN, "     ");   
+              Print_Str(134, 166-(i*20), 0x0005, PRN, "       ");  
             }
-            Ka3=256;
-            Kb3=256;
-            Save_Parameter(0);                         // 保存缺省值参数
-            Print_Str( 32, 216, 0x0405, PRN, "           Restore defaults data           ");
-            Delayms(1000); 
+            if(Channel == TRACK2){
+              Print_Str(245, 166-(i*20), 0x0105, PRN, "     ");
+              Print_Str(289, 166-(i*20), 0x0105, PRN, "     ");
+              Print_Str(334, 166-(i*20), 0x0105, PRN, "       ");
+            }
           }
+          Step = 0;; 
+        } 
+        if(Step >= 10){
+          if(Step == 10){
+            for(i=0; i<=G_Attr[0].Yp_Max; i++){
+              Ka1[i] = Ma1[i];  Ka2[i] = Ma2[i];  Ka3[i] = Ma3[i];
+              Kb1[i] = Mb1[i];  Kb2[i] = Mb2[i];  Kb3[i] = Mb3[i];
+            }
+            Save_Param();                         // 不保存校正后的参数
+            Print_Str( 8, 216, 0x0405, PRN, "                                                ");
+          } 
+          if(Step == 11){
+            Save_Param();                         // 保存校正后的参数
+            Print_Str( 8, 216, 0x0405, PRN, "          SAVING THE CALIBRATION DATA           ");
+          }  
+          if(Step == 12){ 
+            for(i=0; i<=G_Attr[0].Yp_Max; i++){
+              Ka1[i] = 0; Ka2[i] = 1024; Ka3[i] = 0;         // 设置校准参数初值
+              Kb1[i] = 0; Kb2[i] = 1024; Kb3[i] = 0;
+            }
+            Save_Param();  // 清除校准参数，保存缺省值 
+            Print_Str( 8, 216, 0x0405, PRN, "       RESTORE DEFAULTS CALIBRATION DATA        ");
+          }
+          Delayms(1000);                                      
           App_init();
           return;
         }
         break;
-      case K_ITEM_S:
-        if(Channel == TRACK1){  
-          if(Target <2) Target = 2;
-          else          Target = 0;
-        } else {
-          if(Target <5) Target = 5;
-          else          Target = 3;
-        }
-        break;
-      case K_INDEX_S:
-        if(Channel == TRACK1){  
-          if((Target <1)&&(Range == 0)) Target = 1;
-          else if(Target <2) Target = 0;
-        } else {
-          if((Target <4)&&(Range == 0)) Target = 4;
-          else if(Target <5) Target = 3;
-        }
+      case KEY3:
         break;
       case K_ITEM_DEC:
-        if(Range >0) Range--;
-        if(Target == 1) Target = 0;  
-        if(Target == 4) Target = 3;  
+        if((Step == 7)&&(Range > 0)) Range--;  
+        if( Step >= 9)               Step--;
+        if( Step == 8)               Step = 12;
         break;
       case K_ITEM_INC:
-        if(Range  <= G_Attr[0].Yp_Max) Range++;
-        if(Target == 1) Target = 0;  
-        if(Target == 4) Target = 3;  
+        if(Step >= 8)  Step++;
+        if(Step > 12)  Step = 8;
+        if(Step == 7)  Range++;  
+        if(Range  > G_Attr[0].Yp_Max){  
+          Range = 0;        
+          Step++;
+        } 
         break;
       case K_INDEX_DEC:
-        if(Range <= G_Attr[0].Yp_Max){
-          if(Target == 0)  Ka1[Range]--;
-          if((Target == 1)&&(Range == 0))  Ka3--;
-          if(Target == 2)  Ka2[Range] -= 4;
-          if(Target == 3)  Kb1[Range]--;
-          if((Target == 4)&&(Range == 0))  Kb3--;
-          if(Target == 5)  Kb2[Range] -= 4;;
-        } else {
-          if(Exit > 0) Exit--;
-          else         Exit = 2;
+        if(Step == 7){  
+          if((Channel == TRACK1)&&(TmpA > 35))  Ka2[Range] -= 2;
+          if((Channel == TRACK2)&&(TmpB > 35))  Kb2[Range] -= 2;
         }
         break;
       case K_INDEX_INC:
-        if(Range <= G_Attr[0].Yp_Max){
-          if(Target == 0)  Ka1[Range]++;
-          if((Target == 1)&&(Range == 0))  Ka3++;
-          if(Target == 2)  Ka2[Range] += 4;
-          if(Target == 3)  Kb1[Range]++;
-          if((Target == 4)&&(Range == 0))  Kb3++;
-          if(Target == 5)  Kb2[Range] += 4;;
-          if(Range >= G_Attr[0].Yp_Max) Exit++;
-        } else {
-          if(Exit < 2) Exit++;
-          else         Exit = 0;
+        if(Step == 7){  
+          if((Channel == TRACK1)&&(TmpA > 35))  Ka2[Range] += 2;
+          if((Channel == TRACK2)&&(TmpB > 35))  Kb2[Range] += 2;
         }
         break;
       }
       Key_Buffer = 0;
-      if((Target == 1)||(Target == 4)){ 
-        __Set(CH_A_OFFSET, (Ka3 * 195)/256);
-        __Set(CH_B_OFFSET, (Kb3 * 195)/256);
-      } else {
-        __Set(CH_A_OFFSET, (Ka3 * 5)/256);
-        __Set(CH_B_OFFSET, (Kb3 * 5)/256);
-      }
-      __Set(CH_A_RANGE, Range);
-      __Set(CH_B_RANGE, Range);
-      Delayms(200); 
-    }
-    __Set(FIFO_CLR, W_PTR); // FIFO写指针复位 
-//      __Set(CH_A_RANGE, Range);
-//      __Set(CH_B_RANGE, Range);
-    
-    if(Blink){ 
-      Blink = 0;
-      if(Range < G_Attr[0].Yp_Max +1){
-        switch (Target){  
-        case 0:
-          Int32String_sign(&Num, A_Vdc);
-          Print_Str( 45, 166-(Range*20), 0x0005, Twink, Num.str);
-          Print_Str(  4*8, 216, 0x0605, PRN, "     Please connect");
-          Print_Str( 23*8, 216, 0x0105, PRN, " CH_A ");
-          Print_Str( 29*8, 216, 0x0605, PRN, "input to GND       ");
-          Print_Str( 38*8, 216, 0x0605, Twink, "GND");
-          if(Range != 0){
-            Print_Str( 89, 166-(Range*20), 0x0005, PRN, " -- ");
-          } 
-          break;
-        case 1:
-          Int32String_sign(&Num, A_Vdc);
-          Print_Str( 89, 166-(Range*20), 0x0005, Twink, Num.str);
-          Print_Str( 38*8, 216, 0x0605, Twink, "GND");
-          break;
-        case 2:
-          Int32String_sign(&Num, A_Vdc * Y_Attr[Range].SCALE);
-          Print_Str(134, 166-(Range*20), 0x0005, Twink, Num.str);
-          Print_Str(174, 166-(Range*20), 0x0005, Twink, V_Unit[Num.decPos]);
-          Print_Str(  4*8, 216, 0x0605, PRN, " Input ");
-          Print_Str( 11*8, 216, 0x0405, Twink, (u8*)VS_STR[Range]);
-          Print_Str( 20*8, 216, 0x0605, PRN, " standard voltage to ");
-          Print_Str( 41*8, 216, 0x0005, PRN, "CH_A  ");
-          break;
-        case 3:
-          Int32String_sign(&Num, B_Vdc);
-          Print_Str(245, 166-(Range*20), 0x0105, Twink, Num.str);
-          Print_Str(  4*8, 216, 0x0605, PRN, "     Please connect");
-          Print_Str( 23*8, 216, 0x0005, PRN, " CH_B ");
-          Print_Str( 29*8, 216, 0x0605, PRN, "input to GND       ");
-          Print_Str( 38*8, 216, 0x0605, Twink, "GND");
-          if(Range != 0){
-            Print_Str(289, 166-(Range*20), 0x0105, PRN, " -- ");
-          } 
-          break;
-        case 4:
-          Int32String_sign(&Num, B_Vdc);
-          Print_Str(289, 166-(Range*20), 0x0105, Twink, Num.str);
-          Print_Str( 38*8, 216, 0x0605, Twink, "GND");
-          break;
-        case 5:
-          Int32String_sign(&Num, B_Vdc * Y_Attr[Range].SCALE);
-          Print_Str(334, 166-(Range*20), 0x0105, Twink, Num.str);
-          Print_Str(374, 166-(Range*20), 0x0105, Twink, V_Unit[Num.decPos]);
-          Print_Str(  4*8, 216, 0x0605, PRN, " Input ");
-          Print_Str( 11*8, 216, 0x0405, Twink, (u8*)VS_STR[Range]);
-          Print_Str( 20*8, 216, 0x0605, PRN, " standard voltage to ");
-          Print_Str( 41*8, 216, 0x0105, PRN, "CH_B  ");
-        }
-      } else Print_Str(10, 6, 0x0405, Twink, (u8*)ExitStr[Exit % 3]);
     }
   }
 }

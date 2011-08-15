@@ -1,6 +1,6 @@
 /********************* (C) COPYRIGHT 2010 e-Design Co.,Ltd. ********************
- File Name : main.c  
- Version   : DS203_APP Ver 2.3x                                  Author : bure
+ File Name : Main.c  
+ Version   : DS203_APP Ver 2.5x                                  Author : bure
 *******************************************************************************/
 #include "Interrupt.h"
 #include "Function.h"
@@ -33,9 +33,31 @@ APP V2.35  修改了校准过程中的BUG(Calibrat.c)
            修改了扫描时基<5uS时，暂停不了的BUG(Process.c)
            优化了显示数据处理程序(Process.c)
            增加了模拟通道自动零点平衡功能(Main.c,Process.c,Calibrat.c)
+APP V2.36  部分校准操作改为自动模式(Calibrat.c,Process.c,Function.c)
+           修改了开机加载工作参数的方式(Main.c)
+APP V2.37  进一步完善和优化了显示数据处理程序(Process.c)
+           修改了32位有符号及无符号整数转换程序四舍五入的BUG(Function.c)
+           增加了时间频率脉宽占空比测量功能(Process.c, Menu.c)
+APP V2.40  增加了写U盘创建文件名功能(Main.c, Flies.c, dosfs.c)
+           修改存盘时显示文件序号BUG(Menu.c) 
+APP V2.41  增加了文件格式为.BUF的读/写采样缓冲区数据文件(Main.c,Flies.c,Menu.c)
+           增加了文件格式为.CSV的导出采样缓冲区数据文件(Main.c,Flies.c,Menu.c)
+APP V2.42  为节省空间将文件系统转移到SYS_V1.40模块上(ASM.s, Flies.c, dosfs.c)
+           改为用"SerialNo.WPT"的文件形式保存工作参数表(Flies.c)
+           注：APP V2.42以上版本必须与SYS V1.40以上版本一起配合使用
+APP V2.43  修改了模拟通道档位调整时的BUG(Main.c)
+APP V2.44  修改了校准操作时保存参数的BUG(Calibrat.c)
+           增加了开机加载参数成功与否提示(Main.c)
+APP V2.45  修改了读写BUF文件时恢复显示菜单中各个对应项时的BUG(Files.c)
+           删除了读BUF文件时的测试信息反馈显示(Main.c)
+APP V2.50  重写了基于新FAT12文件系统的文件读写程序(Files.c, ASM.s)
+           修改了TH,TL测量显示的BUG(Menu.c)
+           优化了带量纲数值显示相关函数(Menu.c,Function.c,Calibrat.c)
+           修改了脉宽触发程序的BUG(Process.c)
+APP V2.51  修改了Vmin,Vmax,Vpp计量的BUG(Process.c)
 *******************************************************************************/
 
-#define APP_VERSION       "     DS203 Mini DSO APP Ver 2.35      "
+#define APP_VERSION       "     DS203 Mini DSO APP Ver 2.51      "
 
 uc8 PROJECT_STR[20] = "Demo PROG. Ver 1.00";
 
@@ -44,8 +66,11 @@ uc8 PROJECT_STR[20] = "Demo PROG. Ver 1.00";
 *******************************************************************************/
 int main(void)
 { 
-  u32 i, Licence;
-  u16 Count_FPS, Second, Offset, Result;
+  s32 i;
+  u32 Licence;
+  u16 Count_FPS, Second;//,Offset, Result 
+//  u8 N[20];
+//  u8 T_Unit[15]={'u','S','u','S','m','S','S'};
   
   NVIC_SetVectorTable(NVIC_VectTab_FLASH, 0x0C000);   // For Application #1
 //NVIC_SetVectorTable(NVIC_VectTab_FLASH, 0x14000);   // For Application #2
@@ -67,10 +92,15 @@ int main(void)
   X_Attr = (X_attr*)__Get(HORIZONTAL);
   G_Attr = (G_attr*)__Get(GLOBAL);
   T_Attr = (T_attr*)__Get(TRIGGER);
-  Load_Attr();
-  Load_Parameter();            // 读取预设开机参数，赋值Y_Attr等
-  
-/*--------------------------- LICENCE_CTRL_DEMO --------------------------------
+  Load_Attr();                                 // 赋值Y_Attr等
+  i = Load_Param(); 
+  if(i == 0)  // 读取预设开机参数
+    __Display_Str(6*8, 30, GRN, PRN, "     Reload parameter form disk       ");
+  else       
+    __Display_Str(6*8, 30, YEL, PRN, "     Parameter record not found       ");  
+//  i = Load_Param(); // 读取预设开机参数 
+
+  /*--------------------------- LICENCE_CTRL_DEMO --------------------------------
   Offset = Seek_Proj(PROJECT_ID);
   if(Offset >= 2048){                          // Project ID not found
     Offset = Seek_Blank();
@@ -109,7 +139,6 @@ int main(void)
   
   Beep_mS = 500;
   Balance();
-//  Delayms(2000); 
   App_init();
   Key_Buffer=0;
   
@@ -145,14 +174,21 @@ int main(void)
       } 
       Blink = 0;
     }
+    if((_State.Value == HOLD)&&((__Get(FIFO_FULL)!= 0)||(__Get(FIFO_START)== 0))){
+//    if((_State.Value == HOLD)&&(Twink== 1)){
+      _State.Value = 2; 
+      _State.Flag |= UPDAT;
+    }
 //------------------------------ 按键处理循环 ---------------------------------- 
     if(Key_Buffer) { 
       if(PD_Cnt == 0)  App_init();          // 退出省电状态
       PD_Cnt = 600;                         // 600秒
       if(Key_Buffer == KEY_P){
-        _State.Value = 1-_State.Value;                 // "RUN/HOLD" 状态互换
+        _State.Value = (_State.Value == 0)? 1 : 0;       // "RUN/HOLD" 状态互换
+//        _State.Value = 1-_State.Value;                 // "RUN/HOLD" 状态互换
         _State.Flag |= UPDAT;                          // 置相应的更新标志
-        if(_Mode == SIGN){
+        if((Current == FILE)&&(_Curr[2].Value == BUF)) reset_parameter();
+        if(_Mode == SGL){
           for(i=0; i<4*X_SIZE; ++i)  TrackBuff[i] = 0; // 清除旧的显示波形
           __Set(FIFO_CLR, W_PTR);                      // FIFO写指针复位
         }
@@ -167,7 +203,7 @@ int main(void)
         }
       }
       if(Key_Buffer== KEY3){
-        Save_Parameter(0);                             // 保存当前操作设置参数    
+        Save_Param();                             // 保存当前操作设置参数    
         if(Current != FILE){
           Print_Str(91, 0, 0x0405, PRN, "! Save the current setting !");
           Delayms(500);
@@ -176,15 +212,37 @@ int main(void)
       if(Key_Buffer== KEY4){
         if(Current == FILE){
           Print_Str(230, 0, (SCRN<<8)+ TEXT1, PRN, " >   ");
-          if(_Curr[0].Value == SAVE){
-            if(_Curr[2].Value == BMP)       i = Save_Bmp(_Curr[1].Value);
-            else if(_Curr[2].Value == DAT)  i = Save_Dat(_Curr[1].Value);
-//            else if(_Curr[2].Value == CSV)  i = Save_CSV(_Curr[1].Value);
-          } else if(_Curr[0].Value == LOAD) i = Load_Dat(_Curr[1].Value);
-          if(i != 0) Print_Str(230, 0, (SCRN<<8)+ TEXT1, PRN, " ERR "); 
-          else       Print_Str(230, 0, (SCRN<<8)+ TEXT1, PRN, " OK  ");
-          Delayms(500);
-          _Curr[2].Flag |= UPDAT;
+        if(_Curr[0].Value == SAVE){
+          switch (_Curr[2].Value){
+          case BMP:
+            i = Save_Bmp(_Curr[1].Value);
+            break;
+          case DAT:
+            i=Save_Dat(_Curr[1].Value);
+            Delayms(1000);
+            break;
+          case BUF:
+            i=Save_Buf(_Curr[1].Value);
+             break;
+          case CSV:
+            i=Save_Csv(_Curr[1].Value);
+            break;
+          }
+          _Curr[1].Value++;
+        } else { 
+          i=0;
+          if(_Curr[2].Value==DAT) i = Load_Dat(_Curr[1].Value);
+          if(_Curr[2].Value==BUF) i = Load_Buf(_Curr[1].Value);
+        }
+        if       (i == OK  ) Print_Str(230, 0, (SCRN<<8)+ TEXT1, PRN, " OK  ");  
+        else{ 
+          if     (i == EMPT) Print_Str(230, 0, (SCRN<<8)+ TEXT1, PRN, " NONE");  
+          else if(i == OVER) Print_Str(230, 0, (SCRN<<8)+ TEXT1, PRN, " FULL");  
+          else               Print_Str(230, 0, (SCRN<<8)+ TEXT1, PRN, " ERR ");  
+        }
+        Delayms(1000);
+        _Curr[1].Flag |= UPDAT; 
+        _Curr[2].Flag |= UPDAT;
         }  
       }             
       if(Key_Buffer == K_ITEM_DEC){ //------------------ "Item-" Key
@@ -251,8 +309,10 @@ int main(void)
           if(((Current == OUTPUT)&&(Title[OUTPUT][SOURCE].Value != DIGI))&&
             (Title[OUTPUT][FRQN].Value > 10)) 
             Title[OUTPUT][FRQN].Value = 10;            // 模拟信号频率上限为20KHz
-          if((Current == FILE)&&(_Curr[0].Value == 1)) 
-            _Curr[2].Value = 1;                        // 只能Load Dat文件
+          if((Current == FILE)&&(_Curr[0].Value == LOAD)){ 
+            if(_Curr[2].Value == BMP) _Curr[2].Value = BUF;  // 只能Load Dat,Buf文件
+            if(_Curr[2].Value == CSV) _Curr[2].Value = BUF;  // 只能Load Dat,Buf文件
+          }
           _Curr[0].Flag |= UPDAT;
           _Curr[1].Flag |= UPDAT;
           _Curr[2].Flag |= UPDAT;
@@ -262,10 +322,10 @@ int main(void)
           if(Meter[Current-METER_0].Item  > VBT) 
             Meter[Current-METER_0].Item -= 1;          // 改变测量项目 
           else                     
-            Meter[Current-METER_0].Item  = MIN;
+            Meter[Current-METER_0].Item  = TL;//MIN;
           if(Meter[Current-METER_0].Item == FPS) 
             Meter[Current-METER_0].Track = 4;
-          if(Meter[Current-METER_0].Item == MIN) 
+          if(Meter[Current-METER_0].Item == TL)//MIN) 
             Meter[Current-METER_0].Track = 0;
         }
       }
@@ -280,10 +340,10 @@ int main(void)
           _Curr[_Det].Flag |= BLINK;
         } else {                                       // 改变测量对象
           Meter[Current-METER_0].Flag |= UPDAT;
-          if(Meter[Current-METER_0].Track <  TRACK4) 
+          if(Meter[Current-METER_0].Track <=  TRACK4) 
             Meter[Current-METER_0].Track += 1;
-          if(Meter[Current-METER_0].Track == TRACK4) 
-            Meter[Current-METER_0].Track  = 0;
+          if(Meter[Current-METER_0].Track > TRACK4) 
+            Meter[Current-METER_0].Track  = TRACK1;
         }
       }
       if(Key_Buffer == K_INDEX_INC){ //--------------------- "Index+" Key 
@@ -309,15 +369,17 @@ int main(void)
             if(Title[OUTPUT][FRQN].Value > 10) 
               Title[OUTPUT][FRQN].Value = 10;          // 模拟信号频率上限为20KHz
           }
-          if((Current == FILE)&&(_Curr[0].Value == 1))  
-            _Curr[2].Value = 1;                        // 只能Load Dat文件
+          if((Current == FILE)&&(_Curr[0].Value == 1)){  // 只能Load Dat,Buf文件
+            if(_Curr[2].Value == BMP) _Curr[2].Value = DAT;
+            if(_Curr[2].Value == CSV) _Curr[2].Value = DAT;
+          }
           _Curr[0].Flag |= UPDAT;
           _Curr[1].Flag |= UPDAT;
           _Curr[2].Flag |= UPDAT;
           _Curr[3].Flag |= UPDAT;
         } else {
           Meter[Current-METER_0].Flag |= UPDAT;
-          if(Meter[Current-METER_0].Item < MIN)  
+          if(Meter[Current-METER_0].Item < TL)//MIN)  
             Meter[Current-METER_0].Item += 1;          // 改变测量项目
           else                     
             Meter[Current-METER_0].Item  = VBT;

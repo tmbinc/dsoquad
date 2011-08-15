@@ -4,7 +4,6 @@
 *******************************************************************************/
 #include "Interrupt.h"
 #include "Function.h"
-#include <string.h>
 #include "Ident.h"
 #include "BIOS.h"
 

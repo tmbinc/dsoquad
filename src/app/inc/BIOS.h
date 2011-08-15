@@ -1,13 +1,12 @@
 /********************* (C) COPYRIGHT 2010 e-Design Co.,Ltd. ********************
  File Name : BIOS.h  
- Version   : DS203_APP Ver 2.3x                                  Author : bure
+ Version   : DS203_APP Ver 2.5x                                  Author : bure
 *******************************************************************************/
 #ifndef __BIOS_H
 #define __BIOS_H
 
 #include "stm32f10x_lib.h"
 
-//#define APP_VERSION       "     DS203 Mini DSO APP Ver 2.33      "
 
 //============================= Flash 空间分配 =================================
 
@@ -116,6 +115,24 @@ CH_D Trigger source & kind select =>
 #define GLOBAL                 9    // 整体属性指针
 #define TRIGGER                10   // 触发通道属性指针
 #define FPGA_OK                11   // FPGA 配置成功 1 = FPGA config ok
+#define CHARGE         12       // 电池充电状态
+#define HDWVER         13       // 设备硬件版本号 
+#define DFUVER         14       // DFU程序模块版本号 
+#define SYSVER         15       // SYS程序模块版本号 
+#define FPGAVER        16       // FPGA配置程序版本号 
+
+#define ADC_DATA       32+0     // 0~7:ADC_CH_A 8~15:ADC_CH_B 16~17:CH_C&CH_D 
+#define PRE_SAMPLING   32+1     // 0~15:Pre-sampling depth
+#define ALL_SAMPLING   32+2     // 0~15:Total sampling depth
+#define CH_A_MIN_MAX   32+3     // 0~7:VMIN 8~15:VMAX 
+#define CH_A_V_SUM     32+4     // 0~15:CH_A voltage sum
+#define CH_A_V_SSQ     32+5     // 0~15:CH_A voltage sum of squares
+#define CH_A_NEDGE     32+6     // 0~15:CH_A number of edge
+#define CH_A_FREQ      32+7     // 0~15:CH_A frequence
+#define CH_A_PHW_MAX   32+8     // 0~15:CH_A pulse high width MAX
+#define CH_A_PHW_MIN   32+9     // 0~15:CH_A pulse high width MIN
+#define CH_A_PLW_MAX   32+10    // 0~15:CH_A pulse low width MAX
+#define CH_A_PLW_MIN   32+11    // 0~15:CH_A pulse low width MIN
 
 // =============================================================================
 
@@ -203,16 +220,28 @@ extern T_attr *T_Attr;
  void __Set(u8 Object, u32 Value);
  u32  __Get(u8 Object);
  
- void __Disk_Buff_WR(u8* pBuffer, u32 WriteAddr);
- void __Disk_Buff_RD(u8* pBuffer, u32 ReadAddr, u16 NumByteToRead);
- 
- void __Param_Area_WR(u8* pBuffer, u8 PageNum);
- void __Param_Area_RD(u8* pBuffer, u8 PageNum);
+ void __ExtFlash_PageRD(u8* pBuffer, u32 ReadAddr, u16 NumByteToRead);
+ void __ExtFlash_PageWR(u8* pBuffer, u32 WriteAddr);
+ u8   __ReadDiskData(u8* pBuffer, u32 ReadAddr, u16 Lenght);
+ u8   __ProgDiskPage(u8* pBuffer, u32 ProgAddr);
+// u8   __ClashSt(void); 
+// void __ClashClr(void); 
  
  u8   __FLASH_Erase(u32 Address);
  u8   __FLASH_Prog(u32 Address, u16 Data);
  void __FLASH_Unlock(void);
  void __FLASH_Lock(void);
+ 
+ u8   __Chk_SYS(u32 Licence);
+ u8*  __Chk_DFU(void);
+ u8*  __Chk_HDW(void);
+
+ u8 __OpenFileWr(u8* Buffer, u8* FileName, u16* Cluster, u32* pDirAddr);
+ u8 __OpenFileRd(u8* Buffer, u8* FileName, u16* Cluster, u32* pDirAddr);
+ u8 __ReadFileSec(u8* Buffer, u16* Cluster);
+ u8 __ProgFileSec(u8* Buffer, u16* Cluster);
+ u8 __CloseFile(u8* Buffer, u32 Lenght, u16* Cluster, u32* pDirAddr);
+/**/
  
 #endif  
 /*******************************  END OF FILE  ********************************/

@@ -1,6 +1,6 @@
 /********************* (C) COPYRIGHT 2010 e-Design Co.,Ltd. ********************
  File Name : Menu.h  
- Version   : DS203_APP Ver 2.3x                                  Author : bure
+ Version   : DS203_APP Ver 2.4x                                  Author : bure
 *******************************************************************************/
 #ifndef __MENU_H
 #define __MENU_H
@@ -55,10 +55,10 @@
 #define A_sub_B    3
 #define C_and_D    4
 #define C_or_D     5
-#define FILE1      6
-#define FILE2      7
-#define FILE3      8
-#define FILE4      9
+#define REC_1      6    //FILE1,2..4
+#define REC_2      7
+#define REC_3      8
+#define REC_4      9
 
 //------------- RUNNING 子菜单项编号定义 -------------
 #define STATE      0
@@ -77,7 +77,7 @@
 //............. T_BASE 中 MODE 项编号定义 ............
 #define AUTO       0
 #define NORM       1
-#define SIGN       2
+#define SGL        2
 #define NONE       3
 #define SCAN       4
 
@@ -104,6 +104,8 @@
 #define LOAD       1
 #define BMP        0
 #define DAT        1
+#define BUF     2
+#define CSV     3
 
 //--------- BK_LIGHT & VOLUME子菜单项编号定义 --------
 #define CLASS      1
@@ -127,11 +129,12 @@
 #define RMS        4
 #define MAX        5
 #define MIN        6
-//#define FRQ        7
-//#define CIR        8 
-//#define DUT        9
+#define FRQ        7
+#define CIR        8 
+#define DUT        9
+#define TH        10
+#define TL        11
 
-//#define _Item           Title[Item]
 #define _Meas_V_Track   (Title[V_VERNIE][2].Value)  
 #define _Meas_V_Range   (Title[_Meas_V_Track][RANGE].Value)     
 #define _Meas_V_Scale   (Y_Attr[_Meas_V_Range].SCALE)
@@ -139,8 +142,6 @@
 #define _V2_Vernie      (Title[V_VERNIE][1].Value)
 #define _D_V_Source     Title[V_VERNIE][2]
 #define _Delta_V        Title[V_VERNIE][3]
-#define _T1_Vernie      (Title[T_VERNIE][0].Value)
-#define _T2_Vernie      (Title[T_VERNIE][1].Value)
 #define _Delta_T        Title[T_VERNIE][3]
 #define _T_Range        (Title[T_BASE][1].Value)
 #define _T_Scale        (X_Attr[_T_Range].SCALE)
@@ -170,9 +171,10 @@ typedef struct
 
 extern menu Title[13][4];
 extern meter Meter[9];
-extern u8 Current, TypeA, Update;//Type, Blink, 
-extern u8 Detail[14], NumStr[9];
+extern u8 Current, TypeA, Update;
+extern u8 Detail[14], NumStr[12];
 extern u16 Result_FPS;
+extern uc8 T_UNIT[12], S_UNIT[12], P_UNIT[12], V_UNIT[12];
 
 
 void Display_Value(u8 i);
