@@ -36,7 +36,7 @@ u8 Load_Dat(u8 FileNum);
 u8 Save_Buf(u8 FileNum);
 u8 Load_Buf(u8 FileNum);
 u8 Save_Csv(u8 FileNum);
-u8 Make_Filename(u8 FileNum,u8* FileName);
+u8 Make_Filename(u8 FileNum,char* FileName);
 void reset_parameter(void);
 #endif
 /********************************* END OF FILE ********************************/

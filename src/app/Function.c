@@ -30,10 +30,10 @@ void Delayms(u16 mS)
 /*******************************************************************************
  Sign_int2Str: 32位数转e位有效数字符串 + 量纲字符串
 *******************************************************************************/
-void Int2Str(u8 *p, s32 n, uc8 *pUnit, u8 e, u8 Mode)
+void Int2Str(char *p, s32 n, char *pUnit, u8 e, u8 Mode)
 {
   s32 i, j, m, c;
-  u8  *k;
+  char  *k;
   
   if(n == 0x80000000){               // 该数值定义为无效数值
     *p++ = ' '; *p++ = '.';
@@ -81,7 +81,7 @@ void Int2Str(u8 *p, s32 n, uc8 *pUnit, u8 e, u8 Mode)
 void Int32String_sign(I32STR_RES *r, s32 n)
 {
   u32 i, m, c, e=3, fixlen;
-  u8 *p = r->str;
+  char *p = r->str;
   
   fixlen = e+2;
   if(n == 0x80000000){
@@ -179,7 +179,7 @@ void Int32String_sign(I32STR_RES *r, s32 n)
 void Int32String(I32STR_RES *r, u32 n, u32 e)
 {
   u32 i, m, c, fixlen;
-  u8 *p = r->str;
+  char *p = r->str;
 
 //  fixlen = e+2;
   fixlen = e+1;
@@ -271,7 +271,7 @@ void Int32String(I32STR_RES *r, u32 n, u32 e)
 /*******************************************************************************
  Two ASCII character Change to 1 Byte HEX data 
 *******************************************************************************/
-u8 Str2Byte(u8 x,u8 y) // 双ASCII字符转1字节二进制数
+u8 Str2Byte(char x,char y) // 双ASCII字符转1字节二进制数
 {
   uc8 Hexcode[17]="0123456789ABCDEF";
   u8 i, Temp=0;
@@ -290,7 +290,7 @@ u8 Str2Byte(u8 x,u8 y) // 双ASCII字符转1字节二进制数
 /*******************************************************************************
  u16ToDec5: Change 2 Byte to 5 decimal number string   
 *******************************************************************************/
-void u16ToDec5(u8 *p, u16 n)
+void u16ToDec5(char *p, u16 n)
 {
     *p++ = '0'+n/10000;
     n %= 10000;
@@ -306,7 +306,7 @@ void u16ToDec5(u8 *p, u16 n)
 /*******************************************************************************
  u8ToDec3: Change Byte to 3 decimal number string   
 *******************************************************************************/
-void u8ToDec3(u8 *p, u8 n)
+void u8ToDec3(char *p, u8 n)
 {
     *p++ = '0'+n/100;
     n %= 100;
@@ -318,7 +318,7 @@ void u8ToDec3(u8 *p, u8 n)
 /*******************************************************************************
  s8ToPercen: Change sign char to +(-)x.xx string   
 *******************************************************************************/
-void s8ToPercen(u8 *p, s8 n)
+void s8ToPercen(char *p, s8 n)
 {
     if(n >= 0)  *p++ = '+';
     else {
@@ -336,7 +336,7 @@ void s8ToPercen(u8 *p, s8 n)
 /*******************************************************************************
  u8ToDec2: Change Byte to 2 decimal number string   
 *******************************************************************************/
-void u8ToDec2(u8 *p, u8 n)
+void u8ToDec2(char *p, u8 n)
 {
 //    *p++ = '0'+n/100;
     n %= 100;
@@ -348,7 +348,7 @@ void u8ToDec2(u8 *p, u8 n)
 /*******************************************************************************
  Char2Hex: Change Byte to 2 hex number string  
 *******************************************************************************/
-void Char2Hex(u8 *p, u8 n)
+void Char2Hex(char *p, u8 n)
 {
     if(n/16>9) *p++ = 'A'+(n/16-10);
     else       *p++ = '0'+n/16;
@@ -360,7 +360,7 @@ void Char2Hex(u8 *p, u8 n)
 /*******************************************************************************
  Shor2Hex: Change 2Bytes to 4 hex number string  
 *******************************************************************************/
-void Shor2Hex(u8 *p, u16 n)
+void Shor2Hex(char *p, u16 n)
 {
     if(n/0x1000 >9) *p++ = 'A'+(n/0x1000-10);
     else            *p++ = '0'+ n/0x1000;
@@ -378,7 +378,7 @@ void Shor2Hex(u8 *p, u16 n)
 /*******************************************************************************
  Word2Hex: Change 4 Bytes to 8 hex number string  
 *******************************************************************************/
-void Word2Hex(u8 *p, u32 n)
+void Word2Hex(char *p, u32 n)
 {
     if(n/0x10000000>9) *p++ = 'A'+(n/0x10000000-10);
     else               *p++ = '0'+ n/0x10000000;

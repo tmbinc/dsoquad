@@ -10,12 +10,12 @@
 #include "BIOS.h"
 #include "Menu.h"
 
-uc8 VS_STR[9][12]  ={"250-300mV", "!0.5-0.6V!","!1.0-1.2V!","!2.5-3.0V!",
+char VS_STR[9][12]  ={"250-300mV", "!0.5-0.6V!","!1.0-1.2V!","!2.5-3.0V!",
                      "!5.0-6.0V!"," !10-12V! "," !25-30V! "," !50-60V! "};
-uc8 ExitStr[3][50] ={" PRESS (#) KEY TO Exit WITH RESTORE DEFAULTS ",
+char ExitStr[3][50] ={" PRESS (#) KEY TO Exit WITH RESTORE DEFAULTS ",
                      " PRESS (#) KEY TO Exit WITH SAVE CALIBRATION ",
                      " PRESS (#) KEY TO Exit WITHOUT CALIBRATION   "};
-uc8 V_UNIT1[8] ={'m','V','m','V','V',' ','k','V'};
+char V_UNIT1[8] ={'m','V','m','V','V',' ','k','V'};
 
 void Balance(void)
 {
@@ -52,10 +52,11 @@ void Balance(void)
 *******************************************************************************/
 void Calibrat(u8 Channel)
 { 
-  s8  Ma1[10], Mb1[10], Ma3[10], Mb3[10];
+  u8  Ma1[10], Mb1[10], Ma3[10], Mb3[10];
   u16 Ma2[10], Mb2[10], i, j;
   s16 TmpA, TmpB;
-  u8  Range, n[10], k, m, Step;
+  u8  Range, k = 0, m, Step;
+  char n[10];
   
   Key_Buffer = 0; 
   __Set(STANDBY, DN);                                   // ÍË³öÊ¡µç×´Ì¬
@@ -283,7 +284,7 @@ void Calibrat(u8 Channel)
         break;
       case 7:
         Print_Str( 4*8, 216, 0x0305, PRN,   " INPUT ");
-        Print_Str(11*8, 216, 0x0405, Twink, (u8*)VS_STR[Range]);
+        Print_Str(11*8, 216, 0x0405, Twink, (char*)VS_STR[Range]);
         Print_Str(20*8, 216, 0x0305, PRN,   " STANDARD VOLTAGE TO ");
         Print_Str(   8,   6, 0x0305, PRN,   "MODIFY VOLTAGE:   ...    ");
         Print_Str(18*8,   6, 0x0405, Twink, "-");

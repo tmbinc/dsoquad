@@ -76,7 +76,7 @@ extern trigg V_Trigg[4];
 u16  Get_TAB_8x11(u8 Code, u8 Row);
 u8   Get_Ref_Wave(u16 i);
 void Print_Clk(u16 x0, u16 y0, u16 Type, u8 Phase);
-void Print_Str(u16 x0, u16 y0, u16 Color, u8 Mode, u8 *s);
+void Print_Str(u16 x0, u16 y0, u16 Color, u8 Mode, char *s);
 void Draw_Row(u16 Row);
 void Draw_Window(void);						
 void Draw_Mark(u16 m, u16 n);						

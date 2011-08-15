@@ -95,7 +95,7 @@ extern s8  Ka1[10], Kb1[10];
 extern u16 Ka2[10], Kb2[10]; 
 extern s8  Ka3[10], Kb3[10]; 
 extern u32 DataBuf[4096];
-extern u8  Vertical[15][10]; 
+extern char Vertical[15][10]; 
 
 void App_init(void);
 void View_init(void);

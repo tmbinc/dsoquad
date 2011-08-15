@@ -316,7 +316,7 @@ void Print_Clk(u16 x0, u16 y0, u16 Type, u8 Phase)
 /*******************************************************************************
  Print_Str: 
 *******************************************************************************/
-void Print_Str(u16 x0, u16 y0, u16 Type, u8 Mode, u8 *s)
+void Print_Str(u16 x0, u16 y0, u16 Type, u8 Mode, char *s)
 { 
   signed short i, j, b; 
   __LCD_Set_Block(x0, LCD_X2, y0, y0+10);
@@ -592,8 +592,8 @@ void Draw_Mark(u16 m, u16 n)
 { 
   u16 i, j, Tmp;
   
-  if(m < 4)  if(Title[m][POSI].Value > 200-3) return;
-  else       if(V_Trigg[n].Value > 200-3)     return;  
+  if(m < 4)  { if(Title[m][POSI].Value > 200-3) return; }
+  else       { if(V_Trigg[n].Value > 200-3)     return; }
   
   for(i = 0; i <= 10; ++i){
     if(i < 7){

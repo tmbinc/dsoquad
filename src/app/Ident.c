@@ -91,9 +91,9 @@ u8 Add_Str(u32 ProjStrAddr, u16 Offset)
   __FLASH_Unlock();
   for(i=0; i<16; i+=2){
     Data  = *(u8*)ProjStrAddr;
-    (u8*)ProjStrAddr++;
+    ProjStrAddr++;
     Data |= (*(u8*)ProjStrAddr)<<8;
-    (u8*)ProjStrAddr++;
+    ProjStrAddr++;
     Result &= __FLASH_Prog(REC_BASE + Offset + i + 16, Data);
   }
   __FLASH_Lock();
@@ -142,9 +142,11 @@ u8 Add_Lic(u32 LicenceNo, u32 Offsaet)
 *******************************************************************************/
 u32 Input_Lic(u16 x0, u8 y0) // Return: 32Bits Lic 
 {
-  u8  i=0, j, n[2]={"0"};
+  u8  i=0, j;
+  char n[2]={"0"};
   u32 Lic=0;
-  u8  NumStr[9], Type;
+  u8  Type = 0;
+  char NumStr[9];
   
   Word2Hex(NumStr, Lic);
   __Display_Str(x0, y0, 0xFFFF, 0, NumStr);

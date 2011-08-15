@@ -157,7 +157,7 @@ typedef struct  // 硬件综合属性
 
 typedef struct  // 垂直通道属性 
 {
-  u8  STR[8];   // 档位标识字符串
+  char STR[8];   // 档位标识字符串
   s16 KA1;      // A通道位移误差校正系数1
   u16 KA2;      // A通道斜率误差校正系数2
   s16 KB1;      // B通道位移误差校正系数1
@@ -167,7 +167,7 @@ typedef struct  // 垂直通道属性
 
 typedef struct  // 水平通道属性 
 {
-  u8  STR[8];   // 档位标识字符串
+  char STR[8];   // 档位标识字符串
   s16 PSC;      // 预分频系数
   u16 ARR;      // 分频系数
   u16 CCR;      // 占空比系数
@@ -177,7 +177,7 @@ typedef struct  // 水平通道属性
 
 typedef struct  // 触发通道属性 
 {
-  u8  STR[8];   // 触发方式标识字符串
+  char STR[8];   // 触发方式标识字符串
   u8  CHx;      // 触发通道编号
   u8  CMD;      // 触发方式控制字
 } T_attr ; 
@@ -210,7 +210,7 @@ extern T_attr *T_Attr;
  void __Row_DMA_Ready(void);                    // Wait row base data DMA ready
  
  u32  __Read_FIFO(void);                        // Read data from FIFO & Ptr+1
- void __Display_Str(u16 x0, u16 y0, u16 Color, u8 Mode, u8 *s);                      
+ void __Display_Str(u16 x0, u16 y0, u16 Color, u8 Mode, char *s);                      
  
  u32  __Input_Lic(u16 x0, u8 y0);               //Return: 32Bits Licence 
  u32  __GetDev_SN(void);                        // Get 32bits Device Serial Number
@@ -236,8 +236,8 @@ extern T_attr *T_Attr;
  u8*  __Chk_DFU(void);
  u8*  __Chk_HDW(void);
 
- u8 __OpenFileWr(u8* Buffer, u8* FileName, u16* Cluster, u32* pDirAddr);
- u8 __OpenFileRd(u8* Buffer, u8* FileName, u16* Cluster, u32* pDirAddr);
+ u8 __OpenFileWr(u8* Buffer, char* FileName, u16* Cluster, u32* pDirAddr);
+ u8 __OpenFileRd(u8* Buffer, char* FileName, u16* Cluster, u32* pDirAddr);
  u8 __ReadFileSec(u8* Buffer, u16* Cluster);
  u8 __ProgFileSec(u8* Buffer, u16* Cluster);
  u8 __CloseFile(u8* Buffer, u32 Lenght, u16* Cluster, u32* pDirAddr);

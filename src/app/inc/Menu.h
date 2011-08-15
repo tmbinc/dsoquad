@@ -148,7 +148,7 @@
 
 typedef struct 
 {
-  u8   *Str;
+  char *Str;
   u8   Track;
   u8   Item;
   uc16 XPOS1;
@@ -159,7 +159,7 @@ typedef struct
 
 typedef struct 
 {
-  u8   *Str;
+  char *Str;
   u16  *Color;
   s16  Limit;      // Max Value 
   uc8  MARK;       // NUM=0x04, FIX=0x02, CIR=0x01,
@@ -172,9 +172,10 @@ typedef struct
 extern menu Title[13][4];
 extern meter Meter[9];
 extern u8 Current, TypeA, Update;
-extern u8 Detail[14], NumStr[12];
+extern u8 Detail[14];
+extern char NumStr[12];
 extern u16 Result_FPS;
-extern uc8 T_UNIT[12], S_UNIT[12], P_UNIT[12], V_UNIT[12];
+extern char T_UNIT[12], S_UNIT[12], P_UNIT[12], V_UNIT[12];
 
 
 void Display_Value(u8 i);

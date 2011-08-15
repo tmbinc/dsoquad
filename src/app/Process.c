@@ -229,11 +229,13 @@ void Update_Trig(void)
 *******************************************************************************/
 void Process(void)
 { 
-  s16 i, j = 0, k, V[8], n = 0;
+  s16 i, j = 0, k, V[8] = {0}, n = 0;
   s32 Tmp;
   u8  Ch[4], C_D;
   s8  Sa = 2, Sb = 2, Sc = 2, Sd = 2; // 计时状态
   u16 Ta, Tb, Tc, Td;                 // 脉宽计数
+  
+  Ta = Tb = Tc = Td = 0;
   
   PaS = 0; PbS = 0; PcS = 0; PdS = 0; 
   TaN = 0; TbN = 0; TcN = 0; TdN = 0; 
@@ -405,7 +407,7 @@ void Process(void)
 
 void Send_Data(s16 Va, s16 Vb, u8 C_D, u16 n)  //输出显示数据
 {
-  s32 Tmp, i;
+  s32 Tmp = 0, i;
 
   i = n*4;
   if(Va >= Y_BASE+Y_SIZE)  TrackBuff[i + TRACK1] = Y_BASE+Y_SIZE-1;

@@ -26,9 +26,9 @@ u8  BmpHead[54]   = { 0X42, 0X4D, 0XF8, 0XB, 0X00, 0X00, 0X00, 0X00,
 /*******************************************************************************
  打开指定扩展名的文件            输入：文件扩展名             返回值：0x00=成功 
 *******************************************************************************/
-u8 Make_Filename(u8 FileNum, u8* FileName)
+u8 Make_Filename(u8 FileNum, char* FileName)
 {
-  u8 Num[4];
+  char Num[4];
   
   u8ToDec3(Num, FileNum);
   FileName[4]  = Num[0];
@@ -62,7 +62,7 @@ Load_Dat: 加载保存过的屏幕图像原始数据    输入：文件编号     返回值：0x00=成功
 *******************************************************************************/
 u8 Load_Dat(u8 FileNum)
 {
-  u8  Filename[12] = "FILE    DAT"; 
+  char Filename[12] = "FILE    DAT"; 
   u16 i;
   
   u16 pCluster[3];
@@ -82,7 +82,7 @@ Save_Dat: 保存当前屏幕显示图像原始数据    输入：文件编号     返回值：0x00=成功
 *******************************************************************************/
 u8 Save_Dat(u8 FileNum)
 {
-  u8  Filename[13] = "FILE    DAT"; 
+  char Filename[13] = "FILE    DAT"; 
   u16 i, j;
   u16 pCluster[3];
   u32 pDirAddr[1]; 
@@ -104,7 +104,7 @@ Save_Bmp: 保存当前屏幕显示图像为BMP格式    输入：文件编号     返回值：0x00=成功
 *******************************************************************************/
 u8 Save_Bmp(u8 FileNum)
 {
-  u8  Filename[12] = "IMAG    BMP"; 
+  char Filename[12] = "IMAG    BMP"; 
   u16 k, i, j, x=0, y=0, ColorH, ColorL;
 
   u16 pCluster[3];
@@ -213,7 +213,8 @@ Save_Buf: 保存采集数据缓存区为BUF格式    输入：文件编号     返回值：0x00=成功
 *******************************************************************************/
 u8 Save_Buf(u8 FileNum)
 {
-  u8   i, Filename[12] = "DATA    BUF"; 
+  u8   i;
+  char Filename[12] = "DATA    BUF"; 
   u16* p ;
   
   u16 pCluster[3];
@@ -251,7 +252,8 @@ Load_Dat: 加载保存过的采集数据缓冲区    输入：文件编号     返回值：0x00=成功
 *******************************************************************************/
 u8 Load_Buf(u8 FileNum)
 {
-  u8  i, Filename[13] = "DATA    BUF"; 
+  u8  i;
+  char Filename[13] = "DATA    BUF"; 
   u16 *p;
   
   u16 pCluster[3];
@@ -340,10 +342,10 @@ void reset_parameter(void)
   *p++ = 0;
 }
 
-void make_Vertical(u8 TRACK,u8* buf,u8* len)
+void make_Vertical(u8 TRACK,char* buf,u8* len)
 {
   u8 i=0;
-  u8* ptr;
+  char* ptr;
 
   ptr = &Vertical[0][0] + 10*Title[TRACK][2].Value;
   while(*ptr != 0){
@@ -361,7 +363,9 @@ Save_Csv: 保存采集数据缓存区为CSV格式    输入：文件编号     返回值：0x00=成功
 *******************************************************************************/
 u8 Save_Csv(u8 FileNum)
 {
-  u8  Num[4], track[4], Filename[12] = "DATA    CSV"; 
+  u8  track[4];
+  char Num[4];
+  char Filename[12] = "DATA    CSV"; 
   u32 i, k = 0;
   s16 temp;
   u8  count, j, n = 0;
@@ -372,10 +376,10 @@ u8 Save_Csv(u8 FileNum)
   Make_Filename(FileNum, Filename);
   if(__OpenFileWr(SecBuff, Filename, pCluster, pDirAddr)!=OK) return DISK_ERR;
   memcpy(SecBuff, "TRACK1 ", 7);
-  make_Vertical(TRACK1, &SecBuff[7], &count);
+  make_Vertical(TRACK1, (char*)&SecBuff[7], &count);
   k = 7 + count;
   memcpy(&SecBuff[k], "TRACK2 ", 7);
-  make_Vertical(TRACK2, &SecBuff[k+7], &count);
+  make_Vertical(TRACK2, (char*)&SecBuff[k+7], &count);
   k += 7 + count;
   memcpy(&SecBuff[k], "TRACK3,TRACK4,\r\n", 15);
   k += 15;
@@ -441,7 +445,8 @@ Load_Parameter: 加载之前的工作参数                           Return: 0= Success
 *******************************************************************************/
 u8 Load_Param(void)
 { 
-  u8  Sum = 0, Filename[12], Versions = 0x06; 
+  u8  Sum = 0, Versions = 0x06; 
+  char Filename[12];
   u16 i;
   u16* p =(u16*)SecBuff;
   
@@ -489,7 +494,8 @@ u8 Load_Param(void)
 *******************************************************************************/
 u8 Save_Param(void)             // 保存工作参数表文件
 {
-  u8  Sum = 0, Filename[12], Versions = 0x06; 
+  u8  Sum = 0, Versions = 0x06; 
+  char Filename[12];
   u16 i, Tmp[2];
   u16* p =(u16*)SecBuff;
   

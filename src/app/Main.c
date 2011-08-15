@@ -67,8 +67,7 @@ uc8 PROJECT_STR[20] = "Demo PROG. Ver 1.00";
 int main(void)
 { 
   s32 i;
-  u32 Licence;
-  u16 Count_FPS, Second;//,Offset, Result 
+  u16 Count_FPS = 0, Second = 0;//,Offset, Result 
 //  u8 N[20];
 //  u8 T_Unit[15]={'u','S','u','S','m','S','S'};
   
