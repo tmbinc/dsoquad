@@ -8,7 +8,6 @@
 
 /*******************************************************************************
  delayms: 毫秒（mS）延时程序。 输入: 延时等待的毫秒数值（在72MHz主频情况下）
-           INPUT: Delay time(ms), with 72M main freqency
 *******************************************************************************/
 void Delayms(u16 mS) 
 { 
@@ -17,7 +16,6 @@ void Delayms(u16 mS)
 }
 /*******************************************************************************
  Int32String_sign:带符号32位数转3位有效数字字符串  
-                  Convert 32 bits signed value to 3 bits string
 *******************************************************************************/
 void Int32String_sign(I32STR_RES *r, s32 n)
 {
@@ -99,8 +97,7 @@ void Int32String_sign(I32STR_RES *r, s32 n)
     r->len = p-r->str;
 }
 /*******************************************************************************
- Int32String:无符号32位数转e位有效数字字符串
-              Convert unsigned 32 bits value to e bits string
+ Int32String:无符号32位数转e位有效数字字符串  
 *******************************************************************************/
 void Int32String(I32STR_RES *r, u32 n, u32 e)
 {
@@ -179,18 +176,18 @@ void Int32String(I32STR_RES *r, u32 n, u32 e)
 /*******************************************************************************
  Two ASCII character Change to 1 Byte HEX data 
 *******************************************************************************/
-u8 Str2Byte(u8 x,u8 y) // 双ASCII字符转1字节二进制数//Convert double ASC code to 1 byte hex data
+u8 Str2Byte(u8 x,u8 y) // 双ASCII字符转1字节二进制数
 {
   uc8 Hexcode[17]="0123456789ABCDEF";
   u8 i, Temp=0;
   
-  if(x>='a' && x<='z')  x-=32;     // 小写改大写// lower-case to upper case
-  if(y>='a' && y<='z')  y-=32;     // 小写改大写// lower-case to upper case
+  if(x>='a' && x<='z')  x-=32;     // 小写改大写
+  if(y>='a' && y<='z')  y-=32;     // 小写改大写
   for(i=0;i<16;i++){
-    if(Hexcode[i]==x)  Temp+=i*16; // 将字符转为高4位十六进制数值//Convert the char to the upper 4 bits of hexadecimal
+    if(Hexcode[i]==x)  Temp+=i*16; // 将字符转为高4位十六进制数值
   }
   for(i=0;i<16;i++){
-    if(Hexcode[i]==y)  Temp+=i;    // 将字符转为低4位十六进制数值//Convert the char to the lower 4 bits of hexadecimal
+    if(Hexcode[i]==y)  Temp+=i;    // 将字符转为低4位十六进制数值
   }
   return Temp;
 }

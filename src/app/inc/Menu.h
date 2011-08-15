@@ -8,25 +8,22 @@
 #include "stm32f10x_lib.h"
 
 //----------- Detail菜单中常量MARK的定义 -----------
-//-----------Definition of MARK in Detail-----------
-#define NUM2    0x01   // 在指定位置显示2位的Value数值//Show a 2_bits value in a specified address 
-#define NUM3    0x02   // 在指定位置显示浮点3位的Value数值//Show a 3_bits float value in a specified address
-#define CIRC    0x10   // 该Detail项的Value值在调节到头时循环//Value of this detail loop when reach limit
-#define FIX     0x20   // 该Detail项的Value值改变时对应的标识字符串不变//String for the detail do not change when its value changes
-#define NOT     0x80   // 在选择时跳过该Detail项//Jump over this detail
-//#define NONE    0x00   // 其他 // Others
+#define NUM2    0x01   // 在指定位置显示2位的Value数值
+#define NUM3    0x02   // 在指定位置显示浮点3位的Value数值
+#define CIRC    0x10   // 该Detail项的Value值在调节到头时循环
+#define FIX     0x20   // 该Detail项的Value值改变时对应的标识字符串不变
+#define NOT     0x80   // 在选择时跳过该Detail项
+//#define NONE    0x00   // 其他
 
 //----------- Detail菜单中变量Flag的定义 -----------
-//------------Definition of Flag in Detail-------------
-#define HID     0x04   // 不显示该Detail项//Do not show this detail
-#define UPDAT   0x02   // 该Detail项显示刷新//Update this detail
-#define BLINK   0x01   // 该Detail项显示闪烁//Blink this detail
+#define HID     0x04   // 不显示该Detail项
+#define UPDAT   0x02   // 该Detail项显示刷新
+#define BLINK   0x01   // 该Detail项显示闪烁
 
 #define BATTERY    4
 
 
 //=============== MENU 主菜单项编号定义 ===============
-//================Definition of the manu==================
 #define TRACK1     0
 #define TRACK2     1
 #define TRACK3     2
@@ -42,14 +39,12 @@
 #define VOLUME     12
 
 //------------- TRACKn 子菜单项编号定义 --------------
-//-------------Definition of submenu for TRACKn------------
 #define SOURCE     0
 #define COUPLE     1
 #define RANGE      2
 #define POSI       3
 
 //............ TRACKn 中 SOURCE 项编号定义 ...........
-//.............Definition of SOURCE for TRACKn..........
 #define HIDE       0
 /**/
 #define CH_A       1
@@ -66,24 +61,20 @@
 #define FILE4      9
 
 //------------- RUNNING 子菜单项编号定义 -------------
-//--------------Definition of submenu for RUNNING-------
 #define STATE      0
 #define STATUS     1
 
 //.............. STATE 子菜单项编号定义 ..............
-//...............Definition of submenu for STATE.......
 #define RUN        0
 #define HOLD       1
 
 //-------------- T_BASE 子菜单项编号定义 -------------
-//---------------Definition of submenu for T_BASE--------
 #define MODE       0
 #define BASE       1
 #define XPOSI      2
 #define VIEW       3
 
 //............. T_BASE 中 MODE 项编号定义 ............
-//..............Definition of MODE for T_BASE..........
 #define AUTO       0
 #define NORM       1
 #define SIGN       2
@@ -91,40 +82,33 @@
 #define SCAN       4
 
 //-------------- OUTPUT 子菜单项编号定义 -------------
-//---------------Definition of submenu for output------
 #define KIND       0
 #define FRQN       1
 //#define CLASS      1
 
 //--------------- TRIGG 子菜单项编号定义 -------------
-//---------------Definition of submenu for TRIGG-------
 #define SOURCE     0
 #define TR_KIND    1
 #define THRESHOLD  2
 
 //------------- T_VERNIE 子菜单项编号定义 ------------
-//-------------Definition of submenu for T_VERNIE-------
 #define T1         0
 #define T2         1
 
 //------------- V_VERNIE 子菜单项编号定义 ------------
-//------------Definition of submenu for V_VERNIE---------
 #define V1         0
 #define V2         1
 
 //--------------- FILE 子菜单项编号定义 --------------
-//------------Definition of submenu for FILE---------
 #define SAVE       0
 #define LOAD       1
 #define BMP        0
 #define DAT        1
 
 //--------- BK_LIGHT & VOLUME子菜单项编号定义 --------
-//---------Definition of submenu for BK_LIGHT & VOLUME------
 #define CLASS      1
 
 //============== METER 主菜单项编号定义 ==============
-//==============Definition of METER==============
 #define METER_0    13
 #define METER_1    14
 #define METER_2    15
@@ -136,7 +120,6 @@
 #define METER_8    21
 
 //------------- METER 中 Item 项编号定义 -------------
-//--------------Definition of Item for METER----------
 #define VBT        0
 #define FPS        1
 #define VPP        2

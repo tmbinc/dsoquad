@@ -154,7 +154,7 @@ u32 Input_Lic(u16 x0, u8 y0) // Return: 32Bits Lic
     Word2Hex(NumStr, Lic);
     if( Type != Twink ){  // Blink current number each 0.5 Sec.
       Type = Twink;
-      for(j=0; j<8; ++j){ // 刷新显示8位数字，当前位闪烁//Refresh the 8 bits showing, blink current item
+      for(j=0; j<8; ++j){ // 刷新显示8位数字，当前位闪烁
         n[0] = NumStr[j];
         if(i==j) __Display_Str(j*8+ x0, y0, 0xFFFF, Type, n);
         else     __Display_Str(j*8+ x0, y0, 0xFFFF, 0,  n);

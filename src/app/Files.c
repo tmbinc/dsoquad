@@ -23,23 +23,23 @@ UÅÌµ¼ÒıÉÈÇøÄÚÈİ£º0x00      Èç¹ûÎª 0xEB »ò 0xE9 Ôò±íÊ¾¸ÃÉÈÇøÍ¬Ê±Ò²ÊÇÂß¼­·ÖÇøÁãÉÈÇ
                 0x001C~0x001F 4×Ö½Ú¸ÃÅÌµÄÒş²ØÉÈÇøÊı£¨¸ßÎ»ÔÚºó£©    Hidden_Sec    
 £¨FAT32£©       0x0024,0x0025 2×Ö½Ú FATÕ¼ÓÃµÄÉÈÇøÊı£¨¸ßÎ»ÔÚºó£©    FAT_Size32   
 
-FAT±íµÄ³¤¶È(length of FAT)   £ºFAT_LEN   = FAT_Size16 ¡ÁSectorsLen           
-FAT1¿ªÊ¼ÉÈÇø(addr of FAT1)  £ºFAT1_Sect = DiskStart + RsvdSecCnt           
-FAT2¿ªÊ¼ÉÈÇø (addr of FAT2) £ºFAT2_Sect = FAT1_Sect + FAT_Size16           
-¸ùÄ¿Â¼¿ªÊ¼ÉÈÇø(Section of root catalogue)£ºRoot_Sect = FAT2_Sect + FAT_Size16           
-¸ùÄ¿Â¼¿ªÊ¼µØÖ·(addr of root catalogue)£ºRoot_Addr = Root_Sect ¡ÁSectorsLen   
+FAT±íµÄ³¤¶È   £ºFAT_LEN   = FAT_Size16 ¡ÁSectorsLen           
+FAT1¿ªÊ¼ÉÈÇø  £ºFAT1_Sect = DiskStart + RsvdSecCnt           
+FAT2¿ªÊ¼ÉÈÇø  £ºFAT2_Sect = FAT1_Sect + FAT_Size16           
+¸ùÄ¿Â¼¿ªÊ¼ÉÈÇø£ºRoot_Sect = FAT2_Sect + FAT_Size16           
+¸ùÄ¿Â¼¿ªÊ¼µØÖ·£ºRoot_Addr = Root_Sect ¡ÁSectorsLen   
 
-¸ùÄ¿Â¼ÉÈÇøÄÚÈİ£º        Root_Addr + 0x0020 ¿ªÊ¼£¬Ã¿ÌõÄ¿Â¼Ïî³¤¶ÈÎª 0x20£¬//Each catalogue length is 0x20
-(Root catalogue details:)FAT16¸ùÄ¿Â¼Õ¼ÓÃÉÈÇøÊı SecPerRoot = 0x20 //Sections for root catalogue of fat16
-                          FAT32¸ùÄ¿Â¼Õ¼ÓÃÉÈÇøÊı SecPerRoot = 0x01 ¡Á SecPerClus //Sections for root catalogue of fat32
+¸ùÄ¿Â¼ÉÈÇøÄÚÈİ£ºRoot_Addr + 0x0020 ¿ªÊ¼£¬Ã¿ÌõÄ¿Â¼Ïî³¤¶ÈÎª 0x20£¬
+                FAT16¸ùÄ¿Â¼Õ¼ÓÃÉÈÇøÊı SecPerRoot = 0x20 
+                FAT32¸ùÄ¿Â¼Õ¼ÓÃÉÈÇøÊı SecPerRoot = 0x01 ¡Á SecPerClus 
 
-Ä¿Â¼ÏîÖĞµÄÄÚÈİ£º      0x00~0x07 8×Ö½ÚÎÄ¼şÃû  //8 bytes filename 
-(catalogue details:)  0x08~0x0A 3×Ö½ÚÀ©Õ¹Ãû   //3 bytes extroname
-                      0x16,0x17 2×Ö½Ú×î½üĞŞ¸ÄÊ±¼ä£¨ = Hour << 11 + Minute << 5 + Second >> 1 £©//2 bytes modified time
-                      0x18,0x19 2×Ö½Ú×î½üĞŞ¸ÄÈÕÆÚ£¨ =£¨ Year - 1980 £©<< 9 + Month << 5 + Day £©//2 bytes modified date
-        £¨FAT32£©     0x14,0x15 ÎÄ¼ş¿ªÊ¼´ØºÅBit 16~31£¨¸ßÎ»×Ö½ÚÔÚºó£©Cluster_Hi//Cluster_hi for files
-        £¨FAT16£©     0x1A,0x1B ÎÄ¼ş¿ªÊ¼´ØºÅBit  0~15£¨¸ßÎ»×Ö½ÚÔÚºó£©Cluster     0x12E5//Cluster_low for files
-                      0x1C-0x1F 4×Ö½ÚµÄÎÄ¼ş×Ö½Ú³¤¶È £¨¸ßÎ»ÔÚºó£©//4 bytes file length
+Ä¿Â¼ÏîÖĞµÄÄÚÈİ£º0x00~0x07 8×Ö½ÚÎÄ¼şÃû   
+                0x08~0x0A 3×Ö½ÚÀ©Õ¹Ãû
+                0x16,0x17 2×Ö½Ú×î½üĞŞ¸ÄÊ±¼ä£¨ = Hour << 11 + Minute << 5 + Second >> 1 £©
+                0x18,0x19 2×Ö½Ú×î½üĞŞ¸ÄÈÕÆÚ£¨ =£¨ Year - 1980 £©<< 9 + Month << 5 + Day £©
+£¨FAT32£©       0x14,0x15 ÎÄ¼ş¿ªÊ¼´ØºÅBit 16~31£¨¸ßÎ»×Ö½ÚÔÚºó£©Cluster_Hi
+£¨FAT16£©       0x1A,0x1B ÎÄ¼ş¿ªÊ¼´ØºÅBit  0~15£¨¸ßÎ»×Ö½ÚÔÚºó£©Cluster     0x12E5
+                0x1C-0x1F 4×Ö½ÚµÄÎÄ¼ş×Ö½Ú³¤¶È £¨¸ßÎ»ÔÚºó£©
                   
 ÎÄ¼ş¿ªÊ¼µØÖ·  £ºFile_Addr =£¨ Root_Sect + SecPerRoot +£¨Cluster -0x02£©¡ÁSecPerClus £©¡ÁSectors_LEN
 
@@ -73,7 +73,6 @@ u16 BMP_Color[16] = { WHT,  CYAN,  CYAN_,  YEL,
 
 /*******************************************************************************
  ´ò¿ªÖ¸¶¨À©Õ¹ÃûµÄÎÄ¼ş            ÊäÈë£ºÎÄ¼şÀ©Õ¹Ãû             ·µ»ØÖµ£º0x00=³É¹¦ 
-Open the files with specified extro name         INPUT:extroname     RETURN VALUE: 0x00=SUCCESS
 *******************************************************************************/
 u8 Open_File(u8 FileNum, u8 *ExtName)
 {
@@ -81,8 +80,7 @@ u8 Open_File(u8 FileNum, u8 *ExtName)
   u16 SectorCnt;
   u8 FileName[12]="FILE    BMP", Num[4];
   
-               // ------------Éú³ÉÎÄ¼şÃû------------ //   
-              //------------Generate file name--------//
+               // ------------Éú³ÉÎÄ¼şÃû------------ //      
   u8ToDec3(Num, FileNum);
   FileName[4] = Num[0];
   FileName[5] = Num[1];
@@ -91,8 +89,7 @@ u8 Open_File(u8 FileNum, u8 *ExtName)
   FileName[9] = ExtName[1];
   FileName[10]= ExtName[2];
   
-               // ------------¶ÁÈ¡UÅÌ²ÎÊı----------- //  
-                 //------------Read the parameter of USB disk---//
+               // ------------¶ÁÈ¡UÅÌ²ÎÊı----------- //      
   DiskStart =0;
   DirSecNum = 0x20;             
   __Disk_Buff_RD(SecBuff, 0, 256);
@@ -103,25 +100,22 @@ u8 Open_File(u8 FileNum, u8 *ExtName)
   Hidden_Sec =(SecBuff[0x1F]<<24)+(SecBuff[0x1E]<<16)
     +(SecBuff[0x1D]<<8)+(SecBuff[0x1C]);              // 0000
 
-               // ------------¶ÁÈ¡¸ùÄ¿Â¼----------- //  
-  //-------------Read the root catalogue------//
+               // ------------¶ÁÈ¡¸ùÄ¿Â¼----------- //      
   Root_Addr =(DiskStart + RsvdSecCnt + 2*FAT_Size16)*SectorSize; // 4000 
   __Disk_Buff_RD(SecBuff, Root_Addr, 512);
 
-               // ------------²éÕÒÎÄ¼şÃû----------- //  
-        //-------------Seek the file name--------//
+               // ------------²éÕÒÎÄ¼şÃû----------- //      
   for(SectorCnt =0; SectorCnt < DirSecNum; SectorCnt++){
     __Disk_Buff_RD(SecBuff, Root_Addr + SectorCnt*512, 512);
     for(i=0; i<16; i++){
-      if(SecBuff[i*32] == 0xE5)  k = 0xFF;  // ÒÑÉ¾³ıµÄÎÄ¼şÏî//Files deleted
-      else                       k = 0;     // Õı³£µÄÎÄ¼şÏî //Files normal
+      if(SecBuff[i*32] == 0xE5)  k = 0xFF;  // ÒÑÉ¾³ıµÄÎÄ¼şÏî
+      else                       k = 0;     // Õı³£µÄÎÄ¼şÏî
       for(j=0; j<11; j++){
         if(SecBuff[i*32+j] != FileName[j])  k |= 0xFF; // 
       }
       if(k == 0) {                              // File is found
         
-               // ------¼ÆËãÎÄ¼ş´óĞ¡¼°´æ·ÅµØÖ·----- // 
-              //-------Cal the file size and address---//
+               // ------¼ÆËãÎÄ¼ş´óĞ¡¼°´æ·ÅµØÖ·----- //      
         ClusterNum =((SecBuff[i*32+0x1B]<<8)+(SecBuff[i*32+0x1A])); // 00E5
         File_Addr  = Root_Addr +(DirSecNum +(ClusterNum -2)*SecPerClus)*512;// 4000+(20+(E5-2))*200
         File_Size  =((SecBuff[i*32+0x1C])+(SecBuff[i*32+0x1D]<<8)+
@@ -134,7 +128,6 @@ u8 Open_File(u8 FileNum, u8 *ExtName)
 }
 /*******************************************************************************
 Save_Dat: ±£´æµ±Ç°ÆÁÄ»ÏÔÊ¾Í¼ÏñÔ­Ê¼Êı¾İ    ÊäÈë£ºÎÄ¼ş±àºÅ     ·µ»ØÖµ£º0x00=³É¹¦ 
-	Save the data of waveform     INPUT: File NO.     RETURN: 0x00=Success
 *******************************************************************************/
 u8 Save_Dat(u8 FileNum)
 {
@@ -156,7 +149,6 @@ u8 Save_Dat(u8 FileNum)
 }
 /*******************************************************************************
 Load_Dat: ¼ÓÔØ±£´æ¹ıµÄÆÁÄ»Í¼ÏñÔ­Ê¼Êı¾İ    ÊäÈë£ºÎÄ¼ş±àºÅ     ·µ»ØÖµ£º0x00=³É¹¦ 
-          load the data  in USB disk               INPUT:File NO.       RETUREN:0x00 = Success
 *******************************************************************************/
 u8 Load_Dat(u8 FileNum)
 {
@@ -177,7 +169,6 @@ u8 Load_Dat(u8 FileNum)
 }
 /*******************************************************************************
 Save_Bmp: ±£´æµ±Ç°ÆÁÄ»ÏÔÊ¾Í¼ÏñÎªBMP¸ñÊ½    ÊäÈë£ºÎÄ¼ş±àºÅ     ·µ»ØÖµ£º0x00=³É¹¦ 
-          Save the current Waveform as .BMP file INPUT:File No. RETURN:0x00=Success
 *******************************************************************************/
 u8 Save_Bmp(u8 FileNum)
 {
@@ -188,14 +179,14 @@ u8 Save_Bmp(u8 FileNum)
   if(Rvalue != 0) return Rvalue;
   __Disk_Buff_RD(SecBuff, File_Addr, 256);
   
-  i = 0x0036; // µ÷É«°å´æ·Å¿ªÊ¼µØÖ·//Address of the assemble color 
+  i = 0x0036; // µ÷É«°å´æ·Å¿ªÊ¼µØÖ·
   for(j=0; j<16; ++j){
     SecBuff[j*4 +i+0]=(BMP_Color[j]& 0xF800)>>8; // Bule
     SecBuff[j*4 +i+1]=(BMP_Color[j]& 0x07E0)>>3; // Green
     SecBuff[j*4 +i+2]=(BMP_Color[j]& 0x001F)<<3; // Red
     SecBuff[j*4 +i+3]= 0;                        // Alpha
   }
-  i = 0x0076; // Í¼ÏñÊı¾İ¿ªÊ¼´æ·ÅµØÖ·//Address to save the .bmp
+  i = 0x0076; // Í¼ÏñÊı¾İ¿ªÊ¼´æ·ÅµØÖ·
   k = 0;
   for(y=0; y<240; y++){
     for(x=0; x<400 ; x+=2){  
@@ -207,7 +198,7 @@ u8 Save_Bmp(u8 FileNum)
       i++;
       if(i==0){
         __Disk_Buff_WR(SecBuff, File_Addr +(k <<8));
-        Print_Clk(254, 0, (SCRN<<8)+ TEXT1, (k >>2)& 3);    // ½ø¶ÈÖ¸Ê¾ // Progress indicator
+        Print_Clk(254, 0, (SCRN<<8)+ TEXT1, (k >>2)& 3);    // ½ø¶ÈÖ¸Ê¾
         k++;
       }
     }
@@ -234,9 +225,8 @@ u8 Color_Num(u16 Color)
 }
 /*******************************************************************************
 Load_Parameter: ¼ÓÔØÖ®Ç°µÄ¹¤×÷²ÎÊı                           Return: 0= Success
-                Load the Parameter in flash.	
 *******************************************************************************/
-u8 Load_Parameter(void)            // ²ÎÊıÇø¹²ÓĞ4Ò³£¬Ã¿Ò³ 256 Byte//  4 Pages of flash for parameters , 256 byte in each page.
+u8 Load_Parameter(void)            // ²ÎÊıÇø¹²ÓĞ4Ò³£¬Ã¿Ò³ 256 Byte
 { 
   u8 Versions =0x03, Sum =0;
   u16 i;
@@ -244,45 +234,45 @@ u8 Load_Parameter(void)            // ²ÎÊıÇø¹²ÓĞ4Ò³£¬Ã¿Ò³ 256 Byte//  4 Pages of
   
   __Param_Area_RD(SecBuff, PAGE_0);
  
-  if(Versions !=(*p & 0xFF)) return 1;          // °æ±¾³ö´í·µ»Ø// ERROR of Version 
+  if(Versions !=(*p & 0xFF)) return 1;          // °æ±¾³ö´í·µ»Ø
   for(i=0; i<256; ++i) Sum += SecBuff[i];
-  if(Sum != 0) return 2;                  // Ğ£ÑéºÍ³ö´í·µ»Ø// ERROR of checkout
+  if(Sum != 0) return 2;                  // Ğ£ÑéºÍ³ö´í·µ»Ø
   
-  Current =(*p++ >>8);                    // ¼ÓÔØÖ®Ç°µÄ Current Title //Load previous Current Title
+  Current =(*p++ >>8);                    // ¼ÓÔØÖ®Ç°µÄ Current Title
   
   for(i=0; i<7; i++){ 
     Detail[i*2]  = *p;
-    Detail[i*2+1]= (*p++ >>8);             // ¼ÓÔØÖ®Ç°µÄ Detail//Load previous Detail
+    Detail[i*2+1]= (*p++ >>8);             // ¼ÓÔØÖ®Ç°µÄ Detail
   }
   for(i=0; i<13; i++){
-    Title[i][0].Value = *p++;             // ¼ÓÔØÖ®Ç°µÄÏÔÊ¾²Ëµ¥ÖĞ¸÷¸ö¶ÔÓ¦ÏîµÄÖµ//Load the data of submenu of each menu
+    Title[i][0].Value = *p++;             // ¼ÓÔØÖ®Ç°µÄÏÔÊ¾²Ëµ¥ÖĞ¸÷¸ö¶ÔÓ¦ÏîµÄÖµ
     Title[i][1].Value = *p++;
     Title[i][2].Value = *p++;
     Title[i][3].Value = *p++;
   }
   for(i=0; i<9; i++){
     Meter[i].Item     = *p;
-    Meter[i].Track    =(*p++ >>8);        // ¼ÓÔØÖ®Ç°µÄ²âÁ¿ÏîÄ¿¼°²âÁ¿¶ÔÏó//Load the  previous measured items.
+    Meter[i].Track    =(*p++ >>8);        // ¼ÓÔØÖ®Ç°µÄ²âÁ¿ÏîÄ¿¼°²âÁ¿¶ÔÏó
   }
   for(i=0; i<10; i++){
-    Ka1[i] = *p;                         // »Ö¸´Ô­À´µÄ A Í¨µÀÁãµãÎó²îĞ£ÕıÏµÊı//Reload CHA Calibrate factor in base point
-    Kb1[i] =(*p++ >>8);                  // »Ö¸´Ô­À´µÄ B Í¨µÀÁãµãÎó²îĞ£ÕıÏµÊı//Reload CHB Calibrate factor in base point
-    Ka2[i] = *p++;                       // »Ö¸´Ô­À´µÄ A Í¨µÀÔöÒæÎó²îĞ£ÕıÏµÊı//Reload CHA Calibrate factor for gain
-    Kb2[i] = *p++;                       // ¼ÓÔØÖ®Ç°µÄ B Í¨µÀÔöÒæÎó²îĞ£ÕıÏµÊı//Reload CHB Calibrate factor for gain
+    Ka1[i] = *p;                         // »Ö¸´Ô­À´µÄ A Í¨µÀÁãµãÎó²îĞ£ÕıÏµÊı
+    Kb1[i] =(*p++ >>8);                  // »Ö¸´Ô­À´µÄ B Í¨µÀÁãµãÎó²îĞ£ÕıÏµÊı
+    Ka2[i] = *p++;                       // »Ö¸´Ô­À´µÄ A Í¨µÀÔöÒæÎó²îĞ£ÕıÏµÊı
+    Kb2[i] = *p++;                       // ¼ÓÔØÖ®Ç°µÄ B Í¨µÀÔöÒæÎó²îĞ£ÕıÏµÊı
   }
-  Ka3 = *p++;                            // »Ö¸´Ô­À´µÄ A Í¨µÀÎ»ÒÆÎó²îĞ£ÕıÏµÊı//Reload Calibrate factor for offset of CHA
-  Kb3 = *p++;                            // »Ö¸´Ô­À´µÄ B Í¨µÀÎ»ÒÆÎó²îĞ£ÕıÏµÊı//Reload Calibrate factor for offset of CHB
+  Ka3 = *p++;                            // »Ö¸´Ô­À´µÄ A Í¨µÀÎ»ÒÆÎó²îĞ£ÕıÏµÊı
+  Kb3 = *p++;                            // »Ö¸´Ô­À´µÄ B Í¨µÀÎ»ÒÆÎó²îĞ£ÕıÏµÊı
 
   V_Trigg[A].Value = *p++;
-  V_Trigg[B].Value = *p++;               // »Ö¸´Ô­À´A,BÍ¨µÀ´¥·¢ãĞÖµ// Reload Trigger threshhold of channelA and B
+  V_Trigg[B].Value = *p++;               // »Ö¸´Ô­À´A,BÍ¨µÀ´¥·¢ãĞÖµ
   
   return 0;
 }
 /*******************************************************************************
  Save_Parameter: ±£´æµ±Ç°µÄ¹¤×÷²ÎÊı                          Return: 0= Success
 *******************************************************************************/
-u8 Save_Parameter(u8 Default)             // ²ÎÊıÇø¹²ÓĞ4Ò³£¬Ã¿Ò³ 256 Byte //4 pages flash for parameter ,256 bytes for each page.
-{                                          // Ä¿Ç°Ö»ÓÃÁËµÚ0Ò³//Only the section 0 was used yet
+u8 Save_Parameter(u8 Default)             // ²ÎÊıÇø¹²ÓĞ4Ò³£¬Ã¿Ò³ 256 Byte
+{                                          // Ä¿Ç°Ö»ÓÃÁËµÚ0Ò³
   u8 Versions =0x03, Sum =0;
   u16* p =(u16*)SecBuff;
   u16  i;
@@ -290,33 +280,32 @@ u8 Save_Parameter(u8 Default)             // ²ÎÊıÇø¹²ÓĞ4Ò³£¬Ã¿Ò³ 256 Byte //4 pa
   memset(SecBuff,0,256);  
   
   if(Default) Versions =0xFF;
-  *p++ =(Current <<8)+ Versions;            // ±£´æ²ÎÊı°æ±¾ºÅ¼°µ±Ç°µÄ Title //Version of parameter and current Title
+  *p++ =(Current <<8)+ Versions;            // ±£´æ²ÎÊı°æ±¾ºÅ¼°µ±Ç°µÄ Title
   
   for(i=0; i<7; i++) 
-    *p++ =(Detail[i*2+1]<<8)+ Detail[i*2]; // ±£´æµ±Ç°µÄ Detail//Save the Current Detail
+    *p++ =(Detail[i*2+1]<<8)+ Detail[i*2]; // ±£´æµ±Ç°µÄ Detail
   
-  for(i=0; i<13; i++){                     // ±£´æÏÔÊ¾²Ëµ¥ÖĞ¸÷¸ö¶ÔÓ¦ÏîµÄÖµ//Save the value for each submemu
+  for(i=0; i<13; i++){                     // ±£´æÏÔÊ¾²Ëµ¥ÖĞ¸÷¸ö¶ÔÓ¦ÏîµÄÖµ
     *p++ = Title[i][0].Value;
     *p++ = Title[i][1].Value;
     *p++ = Title[i][2].Value;
     *p++ = Title[i][3].Value;
   }
   for(i=0; i<9; i++){
-    *p++ =(Meter[i].Track<<8)+ Meter[i].Item; // ±£´æ²âÁ¿ÏîÄ¿¼°²âÁ¿¶ÔÏó//Save the current measure item
+    *p++ =(Meter[i].Track<<8)+ Meter[i].Item; // ±£´æ²âÁ¿ÏîÄ¿¼°²âÁ¿¶ÔÏó
   }
   for(i=0; i<10; i++){
-    *p++ =(Kb1[i]<<8)+ Ka1[i];             // ±£´æµ±Ç° A,B Í¨µÀÁãµãÎó²îĞ£ÕıÏµÊı//Save Calibrate factor in base point for CHA and CHB
-    *p++ = Ka2[i];                         // ±£´æµ±Ç° A Í¨µÀÔöÒæÎó²îĞ£ÕıÏµÊı//Save Calibrate factor for gain of CHA
-    *p++ = Kb2[i];                         // ±£´æµ±Ç° B Í¨µÀÔöÒæÎó²îĞ£ÕıÏµÊı//Save Calibrate factor for gain of CHB
+    *p++ =(Kb1[i]<<8)+ Ka1[i];             // ±£´æµ±Ç° A,B Í¨µÀÁãµãÎó²îĞ£ÕıÏµÊı
+    *p++ = Ka2[i];                         // ±£´æµ±Ç° A Í¨µÀÔöÒæÎó²îĞ£ÕıÏµÊı
+    *p++ = Kb2[i];                         // ±£´æµ±Ç° B Í¨µÀÔöÒæÎó²îĞ£ÕıÏµÊı
   }
-  *p++ = Ka3;                              // ±£´æµ±Ç° A Í¨µÀÎ»ÒÆÎó²îĞ£ÕıÏµÊı//Save Calibrate factor for offset of CHA
-  *p++ = Kb3;                              // ±£´æµ±Ç° B Í¨µÀÎ»ÒÆÎó²îĞ£ÕıÏµÊı//Save Calibrate factor for offset of CHB
+  *p++ = Ka3;                              // ±£´æµ±Ç° A Í¨µÀÎ»ÒÆÎó²îĞ£ÕıÏµÊı
+  *p++ = Kb3;                              // ±£´æµ±Ç° B Í¨µÀÎ»ÒÆÎó²îĞ£ÕıÏµÊı
   
   *p++ = V_Trigg[A].Value;
-  *p++ = V_Trigg[B].Value;                 // ±£´æµ±Ç°A,BÍ¨µÀ´¥·¢ãĞÖµ  // Save Trigger threshhold of channelA and B
-   
+  *p++ = V_Trigg[B].Value;                 // ±£´æµ±Ç°A,BÍ¨µÀ´¥·¢ãĞÖµ   
   
-  for(i=0; i<255; i++)  Sum += SecBuff[i]; //¼ÆËã²ÎÊıÇøĞ£ÑéºÍ// Cal. the key value for the parameter area.
+  for(i=0; i<255; i++)  Sum += SecBuff[i]; //¼ÆËã²ÎÊıÇøĞ£ÑéºÍ
   SecBuff[255] = (~Sum)+ 1;
   __Param_Area_WR(SecBuff, PAGE_0); 
   return 0;

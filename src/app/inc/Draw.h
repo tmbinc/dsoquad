@@ -14,7 +14,6 @@ typedef struct
 } trigg; 
 
 //------------------- 屏幕显示颜色编号定义 ----------------------
-//------------------- Color  definition ----------------------
 #define TR_1       0
 #define TR_2       1
 #define TR_3       2

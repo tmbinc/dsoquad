@@ -185,29 +185,29 @@ meter Meter[9] =
   {(u8*)METER, TRACK3,    VDC,     314,    342,    17,  UPDAT}, //  Meter #8
 };         
 
-void Display_Meter(void)                  // 每次刷新显示一个测量项//Show a measured item for each refreshing
+void Display_Meter(void)                  // 每次刷新显示一个测量项
 {
   u8  i;
   
   for(i=0; i<9; ++i){        
-    if(Meter[i].Flag & UPDAT){            //-----显示需刷新的测量项目名称//-----Name of item measured
+    if(Meter[i].Flag & UPDAT){            //-----显示需刷新的测量项目名称
       Meter[i].Flag &= (!UPDAT & !BLINK);       // Clr Update & Blink flag
       Print_Str
-        (Meter[i].XPOS1, Meter[i].YPOS,        // 需要显示的坐标//Coordinates
-         Y_INV[Meter[i].Track],                // 需要显示的颜色(所属通道)// Color represent the chanenl
-         PRN,                                  // 需要显示的方式//Show Mode
-         Meter[i].Str +(Meter[i].Item * 5));   // 需要显示的项目名称//Item name
+        (Meter[i].XPOS1, Meter[i].YPOS,        // 需要显示的坐标
+         Y_INV[Meter[i].Track],                // 需要显示的颜色(所属通道)
+         PRN,                                  // 需要显示的方式
+         Meter[i].Str +(Meter[i].Item * 5));   // 需要显示的项目名称
     } 
   }
   if((Current >= METER_0)&&(Current <= METER_8)){
-    if(Blink){                            //-----显示需闪烁的测量项目名称//-----Name of item measured
+    if(Blink){                            //-----显示需闪烁的测量项目名称
       i = Current - METER_0;
       Blink = 0;                               // Clr Blink Ctrl flag 
       Print_Str(
-        Meter[i].XPOS1, Meter[i].YPOS,         // 需要闪烁的坐标 //Coordinates
-        Y_INV[Meter[i].Track],                 // 需要闪烁的颜色(所属通道)// Color represent the chanenl
-        Twink,                                 // 闪烁方式//Show Mode
-        Meter[i].Str +(Meter[i].Item *5));     // 需要闪烁的项目名称//Item name
+        Meter[i].XPOS1, Meter[i].YPOS,         // 需要闪烁的坐标 
+        Y_INV[Meter[i].Track],                 // 需要闪烁的颜色(所属通道)
+        Twink,                                 // 闪烁方式
+        Meter[i].Str +(Meter[i].Item *5));     // 需要闪烁的项目名称
     }
   }
 }
@@ -215,31 +215,31 @@ void Display_Meter(void)                  // 每次刷新显示一个测量项//Show a meas
 void Display_Value(u8 i)
 {
   switch (Meter[i].Item){  
-  case VBT://--------------- 计算和显示电池电压 ---------------//---------------Vol of battery-------------------------
+  case VBT://--------------- 计算和显示电池电压 ---------------
     Int32String_sign(&Num, __Get(V_BATTERY)* 1000);
     Print_Str
       (Meter[i].XPOS2, Meter[i].YPOS,
       ((TEXT1 << 8) + SCRN), 
       PRN,
-      Num.str);                              // 显示测量数值//Show data measured
+      Num.str);                              // 显示测量数值
     Print_Str
       (Meter[i].XPOS2 +40, Meter[i].YPOS,
       ((TEXT1 << 8) + SCRN), 
       PRN,
-      V_Unit[Num.decPos]);   /* */               // 显示测量量纲//Show the unit
+      V_Unit[Num.decPos]);   /* */               // 显示测量量纲
     break;
-  case FPS://--------------- 计算和显示帧计数 ---------------//--------------- Frame per second ---------------
+  case FPS://--------------- 计算和显示帧计数 ---------------
     u8ToDec2(NumStr, Result_FPS & 0xFF);
     Print_Str
       (Meter[i].XPOS2, Meter[i].YPOS,
        Y_COLOR[Meter[i].Track], 
        PRN,
-       NumStr);                              // 显示测量数值// Show data measured
+       NumStr);                              // 显示测量数值
     Print_Str
       (Meter[i].XPOS2 +16, Meter[i].YPOS,
        Y_COLOR[Meter[i].Track], 
        PRN,
-       "/Sec.");                             // 显示测量量纲//Show the unit
+       "/Sec.");                             // 显示测量量纲
     break;  
   case VPP:
     if(Meter[i].Track == TRACK1)
@@ -252,12 +252,12 @@ void Display_Value(u8 i)
       (Meter[i].XPOS2, Meter[i].YPOS,
       Y_COLOR[Meter[i].Track], 
       PRN,
-      Num.str);                              // 显示测量数值// Show data measured
+      Num.str);                              // 显示测量数值
     Print_Str
       (Meter[i].XPOS2 +40, Meter[i].YPOS,
       Y_COLOR[Meter[i].Track], 
       PRN,
-      V_Unit[Num.decPos]);                   // 显示测量量纲//Show the unit
+      V_Unit[Num.decPos]);                   // 显示测量量纲
     break;
   case VDC:
     if(Meter[i].Track == TRACK1)
@@ -272,12 +272,12 @@ void Display_Value(u8 i)
       (Meter[i].XPOS2, Meter[i].YPOS,
       Y_COLOR[Meter[i].Track], 
       PRN,
-      Num.str);                              // 显示测量数值// Show data measured
+      Num.str);                              // 显示测量数值
     Print_Str
       (Meter[i].XPOS2 +40, Meter[i].YPOS,
       Y_COLOR[Meter[i].Track], 
       PRN,
-      V_Unit[Num.decPos]);                   // 显示测量量纲//Show the unit
+      V_Unit[Num.decPos]);                   // 显示测量量纲
     break;
   case RMS:
     if(Meter[i].Track == TRACK1)
@@ -292,12 +292,12 @@ void Display_Value(u8 i)
       (Meter[i].XPOS2, Meter[i].YPOS,
       Y_COLOR[Meter[i].Track], 
       PRN,
-      Num.str);                              // 显示测量数值// Show data measured
+      Num.str);                              // 显示测量数值
     Print_Str
       (Meter[i].XPOS2 +40, Meter[i].YPOS,
       Y_COLOR[Meter[i].Track], 
       PRN,
-      V_Unit[Num.decPos]);                   // 显示测量量纲//Show the unit
+      V_Unit[Num.decPos]);                   // 显示测量量纲
     break;
   case MAX:
     if(Meter[i].Track == TRACK1)
@@ -312,12 +312,12 @@ void Display_Value(u8 i)
       (Meter[i].XPOS2, Meter[i].YPOS,
       Y_COLOR[Meter[i].Track], 
       PRN,
-      Num.str);                              // 显示测量数值// Show data measured
+      Num.str);                              // 显示测量数值
     Print_Str
       (Meter[i].XPOS2 +40, Meter[i].YPOS,
       Y_COLOR[Meter[i].Track], 
       PRN,
-      V_Unit[Num.decPos]);                   // 显示测量量纲//Show the unit
+      V_Unit[Num.decPos]);                   // 显示测量量纲
     break;
   case MIN:
     if(Meter[i].Track == TRACK1)
@@ -332,12 +332,12 @@ void Display_Value(u8 i)
       (Meter[i].XPOS2, Meter[i].YPOS,
       Y_COLOR[Meter[i].Track], 
       PRN,
-      Num.str);                              // 显示测量数值// Show data measured
+      Num.str);                              // 显示测量数值
     Print_Str
       (Meter[i].XPOS2 +40, Meter[i].YPOS,
       Y_COLOR[Meter[i].Track], 
       PRN,
-      V_Unit[Num.decPos]);                   // 显示测量量纲//Show the unit
+      V_Unit[Num.decPos]);                   // 显示测量量纲
     break;
 //  case FRQ:
 //    break;
@@ -354,7 +354,7 @@ void Display_Title(void)
   
   for(i = TRACK1; i <= VOLUME; ++i){
     for(j = 0; j < 4; ++j){
-      if(Title[i][j].Flag & UPDAT){   // 需要刷新的Item// If submenu updated
+      if(Title[i][j].Flag & UPDAT){   // 需要刷新的Item
         Title[i][j].Flag &= !UPDAT;   // Clr Update flag 
         if((i == BATTERY)||(i == TRIGG)){
           if(Title[i][j].MARK & FIX){                  // ---- Under fix mode
@@ -422,14 +422,14 @@ void Display_Title(void)
             }
           } else if(Title[i][j].MARK == NUM2){ 
                 NumStr[0]=' ';
-            if(i == BK_LIGHT){                        // 背光百分比显示处理//Show the percentage of backlight
+            if(i == BK_LIGHT){                        // 背光百分比显示处理
               if(Title[i][j].Value == 9){
                 NumStr[0]='1';
                 NumStr[1]='0';
                 NumStr[2]='0';
               } else  
                 u8ToDec2(NumStr+1, 10*(Title[i][j].Value+1)); 
-            } else {                                  // 音量百分比显示处理//Show the percentage of volume
+            } else {                                  // 音量百分比显示处理
               if(Title[i][j].Value == 10){
                 NumStr[0]='1';
                 NumStr[1]='0';
@@ -474,7 +474,7 @@ void Display_Title(void)
             ); 
           }
         }
-      } else if((Current == i)&&(Detail[i] == j)&&(Blink)){ // 当前光标位置的Item//Current blink item
+      } else if((Current == i)&&(Detail[i] == j)&&(Blink)){ // 当前光标位置的Item
         Blink = 0;
         if((i == BATTERY)||(i == TRIGG)){
           if((Title[i][j].MARK & FIX)){      // ---- Under fix mode
@@ -533,7 +533,6 @@ void Display_Title(void)
 }
 /*******************************************************************************
  Load_Attr:  加载硬件属性
-              Load the attribution of hardware.
 *******************************************************************************/
 void Load_Attr(void)
 {
@@ -553,7 +552,6 @@ void Load_Attr(void)
 }
 /*******************************************************************************
  Update_Battery:  刷新电池电量指示
-                  Refresh display of battry 
 *******************************************************************************/
 void Update_Battery(void)
 {

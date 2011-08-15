@@ -28,17 +28,17 @@ uc16 CLK_TAB[44] =
    0x000,0x200,0x100,0x080,0x070,0x070,0x070,0x008,0x004,0x002,0x000};
 
 uc16 Char_TAB_8x11[744] = {
-  0x000,0x000,0x000,0x780,0x040,0x020,0x020,0x020, // " 
-  0x020,0x020,0x040,0x780,0x000,0x000,0x000,0x000, // # 
-  0x000,0x000,0x000,0x00F,0x010,0x020,0x020,0x020, // $ 
+  0x000,0x000,0x000,0x780,0x040,0x020,0x020,0x020, // " 左上角
+  0x020,0x020,0x040,0x780,0x000,0x000,0x000,0x000, // # 右上角
+  0x000,0x000,0x000,0x00F,0x010,0x020,0x020,0x020, // $ 左下角
   0x30C,0x18C,0x0C0,0x060,0x030,0x318,0x30C,0x000, // % 
   0x000,0x180,0x260,0x21C,0x26A,0x284,0x140,0x000, // & 
-  0x202,0x202,0x202,0x202,0x202,0x202,0x3FE,0x000, // ' 
+  0x202,0x202,0x202,0x202,0x202,0x202,0x3FE,0x000, // ' 电池尾空
   0x000,0x000,0x0F8,0x1FC,0x306,0x202,0x000,0x000, // (
   0x000,0x000,0x202,0x306,0x1FC,0x0F8,0x000,0x000, // )
-  0x000,0x18C,0x0D8,0x070,0x070,0x0D8,0x18C,0x000, // *  
+  0x000,0x18C,0x0D8,0x070,0x070,0x0D8,0x18C,0x000, // *  ×
   0x000,0x020,0x020,0x0F8,0x0F8,0x020,0x020,0x000, // + 
-  0x020,0x020,0x010,0x00F,0x000,0x000,0x000,0x000, // , 
+  0x020,0x020,0x010,0x00F,0x000,0x000,0x000,0x000, // , 右下角
   0x000,0x020,0x020,0x020,0x020,0x020,0x020,0x000, // -
   0x000,0x000,0x300,0x300,0x000,0x000,0x000,0x000, // .
   0x180,0x0C0,0x060,0x030,0x018,0x00C,0x006,0x000, // / 
@@ -53,7 +53,7 @@ uc16 Char_TAB_8x11[744] = {
   0x1DC,0x3FE,0x222,0x222,0x222,0x3FE,0x1DC,0x000, // 8
   0x01C,0x23E,0x222,0x222,0x322,0x1FE,0x0FC,0x000, // 9
   0x000,0x000,0x000,0x198,0x198,0x000,0x000,0x000, // : 
-  0x2FA,0x2FA,0x2FA,0x2FA,0x2FA,0x2FA,0x2FA,0x2FA, // ; 
+  0x2FA,0x2FA,0x2FA,0x2FA,0x2FA,0x2FA,0x2FA,0x2FA, // ; 电池身
   0x000,0x020,0x070,0x0D8,0x18C,0x306,0x202,0x000, // <
   0x090,0x090,0x090,0x090,0x090,0x090,0x000,0x000, // =  
   0x000,0x202,0x306,0x18C,0x0D8,0x070,0x020,0x000, // >
@@ -85,12 +85,12 @@ uc16 Char_TAB_8x11[744] = {
   0x306,0x3DE,0x0F8,0x020,0x0F8,0x3DE,0x306,0x000, // X
   0x000,0x01E,0x23E,0x3E0,0x3E0,0x23E,0x01E,0x000, // Y
   0x38E,0x3C6,0x262,0x232,0x31E,0x38E,0x000,0x000, // Z
-  0x200,0x300,0x2C0,0x220,0x218,0x204,0x3FE,0x000, // [     
-  0x000,0x022,0x042,0x1FE,0x3FE,0x240,0x220,0x000, // \ 
-  0x020,0x010,0x008,0x006,0x008,0x010,0x020,0x020, // ]   
-  0x000,0x220,0x210,0x3FC,0x3FE,0x012,0x022,0x000, // ^  
-  0x000,0x200,0x200,0x200,0x200,0x200,0x200,0x000, // _  
-  0x202,0x202,0x202,0x202,0x202,0x202,0x202,0x202, // ` 
+  0x200,0x300,0x2C0,0x220,0x218,0x204,0x3FE,0x000, // [ 三角       
+  0x000,0x022,0x042,0x1FE,0x3FE,0x240,0x220,0x000, // \下降沿   
+  0x020,0x010,0x008,0x006,0x008,0x010,0x020,0x020, // ] 指针    
+  0x000,0x220,0x210,0x3FC,0x3FE,0x012,0x022,0x000, // ^ 上升沿  
+  0x000,0x200,0x200,0x200,0x200,0x200,0x200,0x000, // _ 下横线  
+  0x202,0x202,0x202,0x202,0x202,0x202,0x202,0x202, // ` 电池身空
   0x1C0,0x3E8,0x228,0x228,0x1F8,0x3F0,0x200,0x000, // a         
   0x202,0x3FE,0x1FE,0x220,0x220,0x3E0,0x1C0,0x000, // b 
   0x1E0,0x3F0,0x210,0x210,0x210,0x330,0x120,0x000, // c 
@@ -117,12 +117,12 @@ uc16 Char_TAB_8x11[744] = {
   0x208,0x318,0x1B0,0x0E0,0x1B0,0x318,0x208,0x000, // x
   0x038,0x278,0x240,0x240,0x240,0x1F8,0x0F8,0x000, // y
   0x318,0x388,0x2C8,0x268,0x238,0x318,0x000,0x000, // z 
-  0x0F8,0x088,0x38E,0x022,0x2FA,0x2FA,0x2FA,0x2FA, // { 
+  0x0F8,0x088,0x38E,0x022,0x2FA,0x2FA,0x2FA,0x2FA, // { 电池头
   0x000,0x000,0x000,0x3FE,0x3FE,0x000,0x000,0x000, // | 
-  0x2FA,0x2FA,0x2FA,0x2FA,0x2FA,0x202,0x3FE,0x000, // } 
-  0x0F8,0x088,0x38E,0x202,0x202,0x202,0x202,0x202};// ~ 
+  0x2FA,0x2FA,0x2FA,0x2FA,0x2FA,0x202,0x3FE,0x000, // } 电池尾
+  0x0F8,0x088,0x38E,0x202,0x202,0x202,0x202,0x202};// ~ 空电池头
 
-uc8  Ref_Wave [300] =   //样本波形描述//Data of wave for instance
+uc8  Ref_Wave [300] =   //样本波形描述
 {100,116,130,144,157,167,175,181,185,185,184,179,173,164,153,141,128,114,100, 86,
   73, 60, 49, 40, 33, 27, 24, 24, 25, 29, 35, 43, 52, 63, 75, 87,100,112,124,135,
  145,153,160,164,167,167,166,163,157,150,142,133,122,111,100, 89, 79, 70, 61, 54,
@@ -139,7 +139,7 @@ uc8  Ref_Wave [300] =   //样本波形描述//Data of wave for instance
  100,106,112,117,121,125,127,129,130,130,128,127,124,121,117,113,109,104,100, 96, 
   92, 88, 85, 83, 81, 80, 79, 79, 80, 81, 83, 85, 88, 91, 94, 97,100,103,106,108,};
 
-uc16  Row_Base0[201] =     //空白列基础数据//Data of blank row
+uc16  Row_Base0[201] =     //空白列基础数据
 {BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK, // 00~10
  BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK, // 10~20
  BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK, // 20~30
@@ -162,7 +162,7 @@ uc16  Row_Base0[201] =     //空白列基础数据//Data of blank row
  BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK, // 90~00
  BLACK };
    
-uc16  Row_Base1[201] =     //仅含垂直边线的列基础数据//Data of row with vertical border line only 
+uc16  Row_Base1[201] =     //仅含垂直边线的列基础数据
 {GRAY ,GRAY ,GRAY ,GRAY ,GRAY ,GRAY ,GRAY ,GRAY ,GRAY ,GRAY , // 00~10
  GRAY ,GRAY ,GRAY ,GRAY ,GRAY ,GRAY ,GRAY ,GRAY ,GRAY ,GRAY , // 10~20
  GRAY ,GRAY ,GRAY ,GRAY ,GRAY ,GRAY ,GRAY ,GRAY ,GRAY ,GRAY , // 20~30
@@ -185,7 +185,7 @@ uc16  Row_Base1[201] =     //仅含垂直边线的列基础数据//Data of row with vertical
  GRAY ,GRAY ,GRAY ,GRAY ,GRAY ,GRAY ,GRAY ,GRAY ,GRAY ,GRAY , // 90~00
  GRAY };
    
-uc16  Row_Base2[201] =     //仅含水平边线的列基础数据//Data of row with horizontal border line only
+uc16  Row_Base2[201] =     //仅含水平边线的列基础数据
 {GRAY ,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK, // 00~10
  BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK, // 10~20
  BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK, // 20~30
@@ -208,7 +208,7 @@ uc16  Row_Base2[201] =     //仅含水平边线的列基础数据//Data of row with horizont
  BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK, // 90~00
  GRAY };
    
-uc16  Row_Base3[201] =     //含水平格线和水平边线的列基础数据//Data of row with horizontal border and horizontal partition line
+uc16  Row_Base3[201] =     //含水平格线和水平边线的列基础数据
 {GRAY ,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK, // 00~10
  BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK, // 10~20
  BLACK,BLACK,BLACK,BLACK,BLACK,GRAY ,BLACK,BLACK,BLACK,BLACK, // 20~30
@@ -231,7 +231,7 @@ uc16  Row_Base3[201] =     //含水平格线和水平边线的列基础数据//Data of row with 
  BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK, // 90~00
  GRAY };
    
-uc16  Row_Base4[201] =     //含垂直格线和水平边线的列基础数据//data of row with horizontal border and vertical partition line
+uc16  Row_Base4[201] =     //含垂直格线和水平边线的列基础数据
 {GRAY ,BLACK,BLACK,BLACK,BLACK,GRAY ,BLACK,BLACK,BLACK,BLACK, // 00~10
  GRAY ,BLACK,BLACK,BLACK,BLACK,GRAY ,BLACK,BLACK,BLACK,BLACK, // 10~20
  GRAY ,BLACK,BLACK,BLACK,BLACK,GRAY ,BLACK,BLACK,BLACK,BLACK, // 20~30
@@ -295,7 +295,7 @@ u8 Get_Ref_Wave(u16 i)
   return Ref_Wave[i];
 }
 /*******************************************************************************
- Print_Clk: 进度指示//show the process
+ Print_Clk: 进度指示
 *******************************************************************************/
 void Print_Clk(u16 x0, u16 y0, u16 Type, u8 Phase)
 {
@@ -309,7 +309,7 @@ void Print_Clk(u16 x0, u16 y0, u16 Type, u8 Phase)
       else                __LCD_SetPixl(Color[Type & 0x0F]);
     }
   }
-  __LCD_Set_Block(LCD_X1,LCD_X2,LCD_Y1,LCD_Y2);  //恢复全尺寸窗口//Renew the full window
+  __LCD_Set_Block(LCD_X1,LCD_X2,LCD_Y1,LCD_Y2);  //恢复全尺寸窗口
 }
 /*******************************************************************************
  Print_Str: 
@@ -322,7 +322,7 @@ void Print_Str(u16 x0, u16 y0, u16 Type, u8 Mode, u8 *s)
     if(Mode == 0) __LCD_SetPixl(Color[Type & 0x0F]);   //Normal replace Display
     else          __LCD_SetPixl(Color[Type >> 0x8]);   //Inverse replace Display
   }
-  x0++;                            // 每一个字符串前增加一空白列 //add a blank space for each string
+  x0++;                            // 每一个字符串前增加一空白列 
   while (*s!=0) {
     for(i=0;i<8;++i){
       if((*s==0x20)||(*s==0x21)) b = 0x0000;
@@ -338,41 +338,40 @@ void Print_Str(u16 x0, u16 y0, u16 Type, u8 Mode, u8 *s)
         }
       }
     }
-    if(*s==0x21) x0 +=4;           //显示位置水平方向+4//+4 in horizontal if ASC is 0x21
-    else  x0 += 8;                 //显示位置水平方向+8//+8 in horizontal 
-    ++s;                           //字符串指针+1 //Increase the pointer by 1
+    if(*s==0x21) x0 +=4;           //显示位置水平方向+4
+    else  x0 += 8;                 //显示位置水平方向+8
+    ++s;                           //字符串指针+1
   }
-  __LCD_Set_Block(LCD_X1,LCD_X2,LCD_Y1,LCD_Y2);  //恢复全尺寸窗口//Renew the full window
+  __LCD_Set_Block(LCD_X1,LCD_X2,LCD_Y1,LCD_Y2);  //恢复全尺寸窗口
 }
 /*******************************************************************************
  Draw_Row : 为缓解DMA冲突，分两个缓冲区交替工作
-            Two buffer works alterlativly to ease the DMA confusion
 *******************************************************************************/
 void Draw_Row(u16 Row)
 { 
   u8  i, y[8], Dot_Hide[8]; 
   s16 Tmp, m, n ;
-  if((Row > MIN_X)&&(Row <= MAX_X)){               // 波形显示区数据预处理//Pre-handle the data  
+  if((Row > MIN_X)&&(Row <= MAX_X)){               // 波形显示区数据预处理
     m = (Row - MIN_X-1)* 4;
     n = (Row - MIN_X)  * 4;
     for(i = 0; i < 8; i += 2) {
       Dot_Hide[i] = 0;
-      y[i]   = TrackBuff[m + i/2];                  // 端点提取// extract the endpoint
+      y[i]   = TrackBuff[m + i/2];                  // 端点提取
       y[i+1] = TrackBuff[n + i/2];
       
-      if(y[i]   >= Y_BASE+Y_SIZE)  y[i]   = Y_BASE+Y_SIZE-1;      // 超界处理// handle the point exceed range
+      if(y[i]   >= Y_BASE+Y_SIZE)  y[i]   = Y_BASE+Y_SIZE-1;      // 超界处理
       else if(y[i]   <= Y_BASE+1)  y[i]   = Y_BASE+1;   
       if(y[i+1] >= Y_BASE+Y_SIZE)  y[i+1] = Y_BASE+Y_SIZE-1;
       else if(y[i+1] <= Y_BASE+1)  y[i+1] = Y_BASE+1;
       
       if(y[i] == y[i+1]){
-        if((y[i] == Y_BASE+1)||(y[i] == Y_SIZE-1)) Dot_Hide[i] = 1;  // 超界消隐//Clean the point exceed range
+        if((y[i] == Y_BASE+1)||(y[i] == Y_SIZE-1)) Dot_Hide[i] = 1;  // 超界消隐
         else {
-          if(y[i] >= Y_BASE+2)           y[i]   -= 1;              // 水平线加粗// Thicken the horizontal line
+          if(y[i] >= Y_BASE+2)           y[i]   -= 1;              // 水平线加粗
           if(y[i+1] <= Y_BASE+Y_SIZE-2)  y[i+1] += 1;
         }
       }
-      if(y[i] > y[i+1]){                                             // 大小排序//Sortting
+      if(y[i] > y[i+1]){                                             // 大小排序
         Tmp = y[i+1]; y[i+1]= y[i]; y[i]= Tmp; 
       }
     }
@@ -387,30 +386,30 @@ void Draw_Row(u16 Row)
     if((Row > MIN_X)&&(Row < MAX_X)){             
       if((Dot_Hide[0] == 0)&&(Title[TRACK1][SOURCE].Value != HIDE)){
         if((y[1]-y[0])>5){
-          for(i=y[0]; i<=y[1]; ++i) LCD_Buffer2[i] |=Color[TR_1]-0x4200; // 低亮度//Less brightness
+          for(i=y[0]; i<=y[1]; ++i) LCD_Buffer2[i] |=Color[TR_1]-0x4200; // 低亮度
         } else {
-          for(i=y[0]; i<=y[1]; ++i) LCD_Buffer2[i] |=Color[TR_1];        // 正常亮度//Normal brightness
+          for(i=y[0]; i<=y[1]; ++i) LCD_Buffer2[i] |=Color[TR_1];        // 正常亮度
         }
       }
       if((Dot_Hide[2] == 0)&&(Title[TRACK2][SOURCE].Value != HIDE)){
         if((y[3]-y[2])>5){
-          for(i=y[2]; i<=y[3]; ++i) LCD_Buffer2[i] |=Color[TR_2]-0x0208; // 低亮度//Less brightness
+          for(i=y[2]; i<=y[3]; ++i) LCD_Buffer2[i] |=Color[TR_2]-0x0208; // 低亮度
         } else {   
-          for(i=y[2]; i<=y[3]; ++i) LCD_Buffer2[i] |=Color[TR_2];        // 正常亮度//Normal brightness
+          for(i=y[2]; i<=y[3]; ++i) LCD_Buffer2[i] |=Color[TR_2];        // 正常亮度
         }
       }
       if((Dot_Hide[4] == 0)&&(Title[TRACK3][SOURCE].Value != HIDE)){
         if((y[5]-y[4])>5){
-          for(i=y[4]; i<=y[5]; ++i) LCD_Buffer2[i] |=Color[TR_3]-0x4008; // 低亮度//Less brightness
+          for(i=y[4]; i<=y[5]; ++i) LCD_Buffer2[i] |=Color[TR_3]-0x4008; // 低亮度
         } else {
-          for(i=y[4]; i<=y[5]; ++i) LCD_Buffer2[i] |=Color[TR_3];        // 正常亮度//Normal brightness
+          for(i=y[4]; i<=y[5]; ++i) LCD_Buffer2[i] |=Color[TR_3];        // 正常亮度
         }
       }
       if((Dot_Hide[6] == 0)&&(Title[TRACK4][SOURCE].Value != HIDE)){
         if((y[7]-y[6])>5){
-          for(i=y[6]; i<=y[7]; ++i) LCD_Buffer2[i] |=Color[TR_4]-0x0200; // 低亮度//Less brightness
+          for(i=y[6]; i<=y[7]; ++i) LCD_Buffer2[i] |=Color[TR_4]-0x0200; // 低亮度
         } else {
-          for(i=y[6]; i<=y[7]; ++i) LCD_Buffer2[i] |=Color[TR_4];        // 正常亮度//Normal brightness
+          for(i=y[6]; i<=y[7]; ++i) LCD_Buffer2[i] |=Color[TR_4];        // 正常亮度
         }
       }
 //------------------------- Draw the Trigg Vernie data -------------------------
@@ -497,30 +496,30 @@ void Draw_Row(u16 Row)
     if((Row > MIN_X)&&(Row < MAX_X)){              
       if((Dot_Hide[0] == 0)&&(Title[TRACK1][SOURCE].Value != HIDE)){
         if((y[1]-y[0])>5){
-          for(i=y[0]; i<=y[1]; ++i) LCD_Buffer1[i] |=Color[TR_1]-0x4200; // 低亮度//Less brightness
+          for(i=y[0]; i<=y[1]; ++i) LCD_Buffer1[i] |=Color[TR_1]-0x4200; // 低亮度
         } else {
-          for(i=y[0]; i<=y[1]; ++i) LCD_Buffer1[i] |=Color[TR_1];        // 正常亮度//Normal brightness
+          for(i=y[0]; i<=y[1]; ++i) LCD_Buffer1[i] |=Color[TR_1];        // 正常亮度
         }
       }
       if((Dot_Hide[2] == 0)&&(Title[TRACK2][SOURCE].Value != HIDE)){
         if((y[3]-y[2])>5){
-          for(i=y[2]; i<=y[3]; ++i) LCD_Buffer1[i] |=Color[TR_2]-0x0208; // 低亮度//Less brightness
+          for(i=y[2]; i<=y[3]; ++i) LCD_Buffer1[i] |=Color[TR_2]-0x0208; // 低亮度
         } else {   
-          for(i=y[2]; i<=y[3]; ++i) LCD_Buffer1[i] |=Color[TR_2];        // 正常亮度//Normal brightness
+          for(i=y[2]; i<=y[3]; ++i) LCD_Buffer1[i] |=Color[TR_2];        // 正常亮度
         }
       }
       if((Dot_Hide[4] == 0)&&(Title[TRACK3][SOURCE].Value != HIDE)){
         if((y[5]-y[4])>5){
-          for(i=y[4]; i<=y[5]; ++i) LCD_Buffer1[i] |=Color[TR_3]-0x4008; // 低亮度//Less brightness
+          for(i=y[4]; i<=y[5]; ++i) LCD_Buffer1[i] |=Color[TR_3]-0x4008; // 低亮度
         } else {
-          for(i=y[4]; i<=y[5]; ++i) LCD_Buffer1[i] |=Color[TR_3];        // 正常亮度//Normal brightness
+          for(i=y[4]; i<=y[5]; ++i) LCD_Buffer1[i] |=Color[TR_3];        // 正常亮度
         }
       }
       if((Dot_Hide[6] == 0)&&(Title[TRACK4][SOURCE].Value != HIDE)){
         if((y[7]-y[6])>5){
-          for(i=y[6]; i<=y[7]; ++i) LCD_Buffer1[i] |=Color[TR_4]-0x0200; // 低亮度//Less brightness
+          for(i=y[6]; i<=y[7]; ++i) LCD_Buffer1[i] |=Color[TR_4]-0x0200; // 低亮度
         } else {
-          for(i=y[6]; i<=y[7]; ++i) LCD_Buffer1[i] |=Color[TR_4];        // 正常亮度//Normal brightness
+          for(i=y[6]; i<=y[7]; ++i) LCD_Buffer1[i] |=Color[TR_4];        // 正常亮度
         }
       }
 //------------------------- Draw the X Vernie data -----------------------------
@@ -688,7 +687,6 @@ void Update_Mark(void)
 }
 /*******************************************************************************
  Update_View_Area: 刷新显示窗口位置指示 
-                  Refresh the address of window indicator
 *******************************************************************************/
 void Update_View_Area(void)
 {  
