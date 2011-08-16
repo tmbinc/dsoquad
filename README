@@ -1,1 +1,7 @@
 This is a gcc port of Seeedstudio's DSO Quad software.
+
+Toolchain: 
+
+http://openmulticopter.org/wiki/Building_an_ARM_Cortex-M3_toolchain worked
+well for me.
+
