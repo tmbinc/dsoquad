@@ -57,7 +57,7 @@ APP V2.50  重写了基于新FAT12文件系统的文件读写程序(Files.c, ASM.s)
 APP V2.51  修改了Vmin,Vmax,Vpp计量的BUG(Process.c)
 *******************************************************************************/
 
-#define APP_VERSION       "     DS203 Mini DSO APP Ver 2.51      "
+#define APP_VERSION       "     DS203 Mini DSO APP Ver 2.51 (gcc)"
 
 uc8 PROJECT_STR[20] = "Demo PROG. Ver 1.00";
 
