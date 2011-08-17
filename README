@@ -1,7 +1,45 @@
 This is a gcc port of Seeedstudio's DSO Quad software.
 
-Toolchain: 
+DSO Quad
+--------
+
+The DSO Quad is a pocket-size oscilloscope from seeedstudio.com.
+
+It uses a dual-channel 40MS/s ADC to capture into the SRAM of a SiliconBlue
+FPGA, clocked at 36MS/s (with optional overclocking to 72MS/s and optional
+interleaving to provide double capture rate). The STM32F103VCT6 (72 MHz Cortex-M3) 
+then reads the FIFO over a 16-bit bus and displays them on an embedded
+(intelligent) TFT screen.
+
+Toolchain
+---------
+
+You need an ARM toolchain that supports Cortex-M3 and builds a compatible
+libgcc. 
 
 http://openmulticopter.org/wiki/Building_an_ARM_Cortex-M3_toolchain worked
 well for me.
+
+The relevant parameters that I used:
+
+TARGET=arm-none-eabi
+USE_LINARO=1
+LIBSTM32_EN=1
+DEFAULT_TO_CORTEX_M3=1
+
+Application
+-----------
+
+There are 4 slots for applications to load, 32kb each. However, the
+currently built executable is already larger than 32kb. Thus, you can't use
+the next slot. For example, if you flash the application to slot 2, you
+can't use slot 3.
+
+.hex files will be generated for all slots (except slot 4, for stated
+reason). To install, connect the DSO Quad over USB, and power it on while
+holding the first button and then copy the .hex file onto the USB drive.
+
+It should be renamed to .rdy. Reboot the scope, and hold the button
+corresponding to the application slot that you want to boot (no button for
+slot 1).
 
