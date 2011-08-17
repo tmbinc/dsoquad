@@ -61,6 +61,8 @@ APP V2.51  修改了Vmin,Vmax,Vpp计量的BUG(Process.c)
 
 uc8 PROJECT_STR[20] = "Demo PROG. Ver 1.00";
 
+extern u8 _vectors[];
+
 /*******************************************************************************
   main : Main routine.
 *******************************************************************************/
@@ -71,10 +73,7 @@ int main(void)
 //  u8 N[20];
 //  u8 T_Unit[15]={'u','S','u','S','m','S','S'};
   
-  NVIC_SetVectorTable(NVIC_VectTab_FLASH, 0x0C000);   // For Application #1
-//NVIC_SetVectorTable(NVIC_VectTab_FLASH, 0x14000);   // For Application #2
-//NVIC_SetVectorTable(NVIC_VectTab_FLASH, 0x1C000);   // For Application #3
-//NVIC_SetVectorTable(NVIC_VectTab_FLASH, 0x24000);   // For Application #4
+  NVIC_SetVectorTable(NVIC_VectTab_FLASH, (u32)&_vectors);
   
 //Note: 用 IAR_V4.x 编译时，变更 App#n 还要同时修改 lnkarm.xcl 文件中的对应项 
 //      用 IAR_V5.x 编译时，变更 App#n 还要同时修改 xxxxxx.icf 文件中的对应项 
