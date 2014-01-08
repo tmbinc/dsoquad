@@ -8,7 +8,7 @@
 #include "stm32f10x_lib.h"
 
 
-//============================= Flash 空间分配 =================================
+//============================= Flash space allocation =================================
 
 #define BIN_BASE                ((u32)(0x0802C000)) // Size < 68KB  
 #define PRM_BASE                BIN_BASE + 68*1024  // Size =  2KB   
@@ -20,46 +20,57 @@
 #define SYS_BASE                ((u32)(0x08004000)) // Size = 32KB   
 #define DFU_BASE                ((u32)(0x08000000)) // Size = 16KB 
 
-//====================== 函数 Set 中 Object 及 Value 定义 ======================
+//====================== Function defined in the Set Object and Value =================== ===
 
-#define CH_A_OFFSET       0     // A通道垂直位移    Value = 0~200
-#define CH_B_OFFSET       1     // B通道垂直位移    Value = 0~200
-#define BACKLIGHT         2     // 背光亮度         Value = 0~100
-#define BEEP_VOLUME       3     // 蜂鸣器音量       Value = 0~100
-#define BETTERY_DT        4     // 电池电压检测     Value = 1: 启动
-#define ADC_MODE          5     // ADC工作模式      Value = 1/0
-#define FIFO_CLR          6     // FIFO指针复位     Value = 1/0: W_PTR/R_PTR
-  #define R_PTR           0       // FIFO读地址指针复位
-  #define W_PTR           1       // FIFO写地址指针复位
-#define T_BASE_PSC        7     // 时基预分频值     Value = 0~65535
-#define T_BASE_ARR        8     // 时基分频值       Value = 0~65535
-#define CH_A_COUPLE       9     // A通道耦合方式    Value = 1/0: AC/DC
+#define CH_A_OFFSET       0     // A channel vertical displacement Value = 0 ~ 200
+#define CH_B_OFFSET       1     // B-channel vertical displacement Value = 0 ~ 200
+#define BACKLIGHT         2     // Backlight Brightness Value = 0 ~ 100
+#define BEEP_VOLUME       3     // Buzzer Volume Value = 0 ~ 100
+#define BETTERY_DT        4     // battery voltage detection Value = 1: start
+#define ADC_MODE          5     // ADC operating mode Value = 1 / 0
+#define FIFO_CLR          6     // FIFO Pointer Reset Value = 1 / 0: W_PTR / R_PTR
+  //#define R_PTR           0       // FIFO read address pointer is reset ( Note: Seems to be used for something else in FPGA V2.50)
+  #define W_PTR           1       // FIFO write & read address pointer is reset
+#define T_BASE_PSC        7     // Time Base Prescale Value = 0 ~ 65535
+#define T_BASE_ARR        8     // time base divider value Value = 0 ~ 65535
+#define CH_A_COUPLE       9     // A channel coupling Value = 1 / 0: AC / DC
   #define DC              0
   #define AC              1
-#define CH_A_RANGE       10     // A通道输入量程    Value = 0~5
-#define CH_B_COUPLE      11     // B通道耦合方式    Value = 1/0: AC/DC
+#define CH_A_RANGE       10     // A channel input range Value = 0 ~ 5
+#define CH_B_COUPLE      11     // B-channel coupling Value = 1 / 0: AC / DC
 //#define DC              0
 //#define AC              1
-#define CH_B_RANGE       12     // B通道输入量程    Value = 0~5
-#define ANALOG_ARR       13     // 模拟输出分频值   Value = 0~65535
-#define ANALOG_PTR       14     // 模拟输出指针     Value = 0~65535
-#define ANALOG_CNT       15     // 每周期合成点数   Value = 0~65535
-#define DIGTAL_PSC       16     // 脉冲输出预分频值 Value = 0~65535
-#define DIGTAL_ARR       17     // 脉冲输出分频值   Value = 0~65535
-#define DIGTAL_CCR       18     // 脉冲输出占空比值 Value = 0~65535
-#define KEY_IF_RST       19     // 定时中断标志复位 Value = 0
-#define STANDBY          20     // 进入降功耗等待   Value = 0
-#define FPGA_RST         31     // FPGA 复位        Value = 0
+#define CH_B_RANGE       12     // B channel input range Value = 0 ~ 5
+#define ANALOG_ARR       13     // analog output divider value Value = 0 ~ 65535
+#define ANALOG_PTR       14     // analog output pointer Value = 0 ~ 65535
+#define ANALOG_CNT       15     // number of points per cycle synthesis Value = 0 ~ 65535
+#define DIGTAL_PSC       16     // pulse output prescaler Value = 0 ~ 65535
+#define DIGTAL_ARR       17     // pulse output divider value Value = 0 ~ 65535
+#define DIGTAL_CCR       18     // pulse output duty cycle value Value = 0 ~ 65535
+#define KEY_IF_RST       19     // timer interrupt flag is reset Value = 0
+#define STANDBY          20     // waiting to enter the power-down Value = 0
+#define FPGA_RST         31     // FPGA Reset Value = 0
 
-#define TRIGG_MODE       32+0  // 触发模式          Value = Mode
-#define V_THRESHOLD      32+1  // 电压触发门限      Value = 0~200
-#define T_THRESHOLD      32+2  // 脉宽触发时间门限  Value = 0~65535
-#define ADC_CTRL         32+4  // ADC 工作状态设置  Value = 1/0 EN/DN
-#define A_POSITION       32+5  // CH_A的零点位置    Value = 0~200
-#define B_POSITION       32+6  // CH_B的零点位置    Value = 0~200
-#define REG_ADDR         32+7  // 该地址决定了FPGA中哪一组寄存器的数据被MCU读入
+#define TRIGG_MODE       32+0  // trigger mode Value = Mode
+#define V_THRESHOLD      32+1  // voltage trigger threshold Value = 0 ~ 200
+#define T_THRESHOLD      32+2  // pulse width trigger time threshold Value = 0 ~ 65535
+#define ADC_CTRL         32+4  // ADC work status Set Value = 1 / 0 EN / DN
+#define A_POSITION       32+5  // CH_A zero point Value = 0 ~ 200
+#define B_POSITION       32+6  // CH_B zero point Value = 0 ~ 200
+#define REG_ADDR         32+7  // the address determines which set of registers in the FPGA the data read by the MCU
 
-//==================== 函数 Set 中 TRIGG_MODE 的 Value 定义=====================
+/* Input channel resolutions */
+#define ADC_50mV 0
+#define ADC_100mV 1
+#define ADC_200mV 2
+#define ADC_500mV 3
+#define ADC_1V 4
+#define ADC_2V 5
+#define ADC_5V 6
+#define ADC_10V 7
+#define ADC_RANGE_COUNT 8
+
+//==================== Set the function defined in TRIGG_MODE =====================
 /*
 CH_A Trigger source & kind select => 
 0x00: by Negedge;   0x01: by Posedge;   0x02: by low level; 0x03: by high level
@@ -79,19 +90,19 @@ CH_D Trigger source & kind select =>
 
 0x20~0xFF  =>  Unconditional trigger
 */
-#define UNCONDITION       0x20        // 无条件触发采样        
+#define UNCONDITION       0x20        // Unconditional trigger sampling
 
-//================ 函数 Set 中 ADC_CTRL & STANDBY 的 Value 定义 ================
+//================ Function Set the Value in the definition ADC_CTRL & STANDBY ================
 
 #define DN            0
 #define EN            1
 
-//===================== 函数 Set 中 ADC_MODE 的 Value 定义 =====================
+//===================== Set the Value function defined in ADC_MODE =====================
 
-#define SEPARATE      0    // ADC独立采样模式
-#define INTERLACE     1    // ADC交替采样模式
+#define SEPARATE      0    // ADC independent sampling mode
+#define INTERLACE     1    // ADC Alternate Sampling mode
 
-//========================= 函数 Get 中的 Kind 定义 ============================
+//========================= Get the Kind in the definition of the function ============================
 
 #define FIFO_DIGIT             0    // 16bits FIFO digital data
 #define FIFO_EMPTY             1    // FIFO empty flag: 1 = empty
@@ -108,18 +119,19 @@ CH_D Trigger source & kind select =>
   #define KEY2_STATUS          0x2000    // 0 = Key push on
   #define KEY1_STATUS          0x4000    // 0 = Key push on
   #define K_ITEM_I_STATUS      0x8000    // 0 = Key push on
+  #define ALL_KEYS 0xFF48
 #define USB_POWER              5    // USB power status: 1 = Power ON
 #define V_BATTERY              6    // Battery voltage (mV)
-#define VERTICAL               7    // 垂直通道属性指针
-#define HORIZONTAL             8    // 水平通道属性指针
-#define GLOBAL                 9    // 整体属性指针
-#define TRIGGER                10   // 触发通道属性指针
-#define FPGA_OK                11   // FPGA 配置成功 1 = FPGA config ok
-#define CHARGE         12       // 电池充电状态
-#define HDWVER         13       // 设备硬件版本号 
-#define DFUVER         14       // DFU程序模块版本号 
-#define SYSVER         15       // SYS程序模块版本号 
-#define FPGAVER        16       // FPGA配置程序版本号 
+#define VERTICAL               7    // pointer to the vertical channel properties
+#define HORIZONTAL             8    // pointer to the level of channel properties
+#define GLOBAL                 9    // pointer to the overall properties
+#define TRIGGER                10   // pointer to trigger channel properties
+#define FPGA_OK                11   // FPGA configuration is successful 1 = FPGA config ok
+#define CHARGE         12       // battery charge status
+#define HDWVER         13       // device hardware version 
+#define DFUVER         14       // DFU version number of program modules
+#define SYSVER         15       // SYS version number of program modules
+#define FPGAVER        16       // FPGA configuration program version number
 
 #define ADC_DATA       32+0     // 0~7:ADC_CH_A 8~15:ADC_CH_B 16~17:CH_C&CH_D 
 #define PRE_SAMPLING   32+1     // 0~15:Pre-sampling depth
@@ -136,56 +148,63 @@ CH_D Trigger source & kind select =>
 
 // =============================================================================
 
-typedef struct  // 硬件综合属性 
+typedef struct  // hardware integrated properties 
 {
-  u16 LCD_X;    // 屏幕水平显示点数
-  u16 LCD_Y;    // 屏幕垂直显示点数
-  u16 Yp_Max;   // 垂直档位最大值     
-  u16 Xp_Max;   // 水平档位最大值     
-  u16 Tg_Num;   // 触发档位最大值
-  u16 Yv_Max;   // 垂直位移最大值 
-  u16 Xt_Max;   // 水平位移最大值 
-  u16 Co_Max;   // 耦合方式最大值 
-  u8  Ya_Num;   // 模拟通道数目
-  u8  Yd_Num;   // 数字通道数目
-  u8  INSERT;   // 开始应用插值的档位
-  u16 KpA1;     // A通道位移补偿系数1
-  u16 KpA2;     // A通道位移补偿系数2
-  u16 KpB1;     // B通道位移补偿系数1
-  u16 KpB2;     // B通道位移补偿系数2
+  u16 LCD_X;    // screen horizontal pixels
+  u16 LCD_Y;    // screen vertical pixels
+  u16 Yp_Max;   // vertical scale maximum     
+  u16 Xp_Max;   // maximum level stalls     
+  u16 Tg_Num;   // trigger the maximum stall
+  u16 Yv_Max;   // maximum vertical displacement 
+  u16 Xt_Max;   // maximum horizontal displacement 
+  u16 Co_Max;   // maximum coupling 
+  u8  Ya_Num;   // the number of analog channels
+  u8  Yd_Num;   // the number of digital channels
+  u8  INSERT;   // Start application gear interpolation
+  u16 KpA1;     // A channel shift compensation factor 1
+  u16 KpA2;     // A channel shift compensation factor 2
+  u16 KpB1;     // B channel compensation coefficient of an offset
+  u16 KpB2;     // B channel compensation coefficient 2 displacement
 } G_attr ;
 
-typedef struct  // 垂直通道属性 
+typedef struct  // vertical channel properties 
 {
-  char STR[8];   // 档位标识字符串
-  s16 KA1;      // A通道位移误差校正系数1
-  u16 KA2;      // A通道斜率误差校正系数2
-  s16 KB1;      // B通道位移误差校正系数1
-  u16 KB2;      // B通道斜率误差校正系数2
-  u32 SCALE;    // 垂直通道比例系数
+  u8  STR[8];   // stall identification string
+  s16 KA1;      // A channel displacement error correction factor 1
+  u16 KA2;      // A channel slope error correction factor 2
+  s16 KB1;      // B channel displacement error correction factor 1
+  u16 KB2;      // B channel slope error correction factor 2
+  u32 SCALE;    // vertical channel scale factor
 } Y_attr ;
 
-typedef struct  // 水平通道属性 
+typedef struct  // horizontal channel properties 
 {
-  char STR[8];   // 档位标识字符串
-  s16 PSC;      // 预分频系数
-  u16 ARR;      // 分频系数
-  u16 CCR;      // 占空比系数
-  u16 KP;       // 插值系数
-  u32 SCALE;    // 水平通道比例系数
+  u8  STR[8];   // stall identification string
+  s16 PSC;      // prescaler
+  u16 ARR;      // frequency coefficient
+  u16 CCR;      // duty factor
+  u16 KP;       // interpolation factor
+  u32 SCALE;    // horizontal channel scale factor
 } X_attr ; 
 
-typedef struct  // 触发通道属性 
+typedef struct  // trigger the channel properties 
 {
-  char STR[8];   // 触发方式标识字符串
-  u8  CHx;      // 触发通道编号
-  u8  CMD;      // 触发方式控制字
+  u8  STR[8];   // trigger identification string
+  u8  CHx;      // trigger the channel number
+  u8  CMD;      // trigger control word
 } T_attr ; 
 
 extern Y_attr *Y_Attr; 
 extern X_attr *X_Attr; 
 extern G_attr *G_Attr; 
 extern T_attr *T_Attr; 
+
+// CPU clock frequency is 72 MHz.
+#define CPUFREQ 72000000
+
+// Font size
+#define FONT_HEIGHT 14
+#define FONT_WIDTH 8
 
 //==============================================================================
 //                        System function entrance
@@ -236,6 +255,7 @@ extern T_attr *T_Attr;
  u8*  __Chk_DFU(void);
  u8*  __Chk_HDW(void);
 
+ // Note: filename should be 11-byte char array, like "FILE0001CSV"
  u8 __OpenFileWr(u8* Buffer, char* FileName, u16* Cluster, u32* pDirAddr);
  u8 __OpenFileRd(u8* Buffer, char* FileName, u16* Cluster, u32* pDirAddr);
  u8 __ReadFileSec(u8* Buffer, u16* Cluster);
